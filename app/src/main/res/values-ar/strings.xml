@@ -1,0 +1,5 @@
+<resources>
+    <string name="email">البريد الالكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="login">دخول</string>
+</resources>

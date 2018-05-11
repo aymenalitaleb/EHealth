@@ -1,0 +1,5 @@
+<resources>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Entrer</string>
+</resources>
