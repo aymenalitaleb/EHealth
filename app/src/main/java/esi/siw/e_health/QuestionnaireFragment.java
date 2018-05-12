@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -35,6 +36,7 @@ public class QuestionnaireFragment extends Fragment {
     View view;
 
     LinearLayout linearLayout;
+    ScrollView scrollView;
     JSONArray jsonArray;
 
     public QuestionnaireFragment() {
@@ -46,8 +48,10 @@ public class QuestionnaireFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_questionnaire, container, false);
+        scrollView = view.findViewById(R.id.scrollView);
         linearLayout = view.findViewById(R.id.linearLayout);
-
+        scrollView.removeAllViews();
+        scrollView.addView(linearLayout);
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
@@ -59,7 +63,7 @@ public class QuestionnaireFragment extends Fragment {
 
 
         // Inflate the layout for this fragment
-        return linearLayout;
+        return scrollView;
 
     }
 
