@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,12 +64,12 @@ public class QuestionnaireFragment extends Fragment {
     }
 
 
-    private String readFromFile() {
+    private String readFromFile(String fileName) {
 
         String ret = "";
 
         try {
-            InputStream inputStream = getActivity().openFileInput("questionnaire.json");
+            InputStream inputStream = getActivity().openFileInput(fileName);
 
             if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -94,7 +95,7 @@ public class QuestionnaireFragment extends Fragment {
 
     public void getQuestions() {
         try {
-            jsonArray = new JSONArray(readFromFile());
+            jsonArray = new JSONArray(readFromFile("questionnaire.json"));
             JSONObject jsonObject = null;
             for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -102,13 +103,22 @@ public class QuestionnaireFragment extends Fragment {
                     // Getting question
                     TextView question = new TextView(getContext());
                     jsonObject = jsonArray.getJSONObject(i);
-                    Log.e("jsonObject", jsonObject.getString("Question"));
                     question.setText(jsonObject.getString("Question"));
                     question.setId(jsonObject.getInt("idQuestion"));
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     question.setLayoutParams(params);
                     linearLayout.addView(question);
+
+                    // Getting choices
+                    JSONArray choix = jsonObject.getJSONArray("Choix");
+                    for (int j = 0; j < choix.length(); j++) {
+                        CheckBox choi = new CheckBox(getContext());
+                        choi.setText(choix.getJSONObject(j).getString("Choix"));
+                        choi.setLayoutParams(params);
+                        linearLayout.addView(choi);
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();

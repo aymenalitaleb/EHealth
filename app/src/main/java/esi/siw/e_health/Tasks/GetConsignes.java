@@ -15,7 +15,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class GetQuestionnaire extends AsyncTask {
+public class GetConsignes extends AsyncTask {
 
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
@@ -25,7 +25,7 @@ public class GetQuestionnaire extends AsyncTask {
     ProgressDialog progressDialog;
     private Context context;
 
-    public GetQuestionnaire(Context context) {
+    public GetConsignes(Context context) {
         this.context = context;
     }
 
@@ -34,7 +34,7 @@ public class GetQuestionnaire extends AsyncTask {
     protected void onPreExecute() {
         super.onPreExecute();
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Chargement du questionnaire ..."); // Setting Message
+        progressDialog.setMessage("Chargement des consignes ..."); // Setting Message
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
         progressDialog.setCancelable(false);
         // progressDialog.show(); // Display Progress Dialog
@@ -48,7 +48,7 @@ public class GetQuestionnaire extends AsyncTask {
 
             int idPatient = (Integer) objects[0];
 
-            String link = "http://malitaleb.000webhostapp.com/getQuestionnaire.php";
+            String link = "http://malitaleb.000webhostapp.com/getConsignes.php";
             String data = URLEncoder.encode("idPatient", "UTF-8") + "="
                     + URLEncoder.encode(String.valueOf(idPatient), "UTF-8");
 
@@ -104,7 +104,7 @@ public class GetQuestionnaire extends AsyncTask {
         String response = (String) o;
         // Toast.makeText(context,response,Toast.LENGTH_LONG).show();
         if (response != null) {
-            writeToFile(response, "questionnaire.json");
+            writeToFile(response, "consignes.json");
         }
 
     }

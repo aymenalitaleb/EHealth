@@ -93,11 +93,13 @@ public class Dashboard extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment;
+        Class fragmentClass = null;
 
         if (id == R.id.questionnaire) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+            fragmentClass = QuestionnaireFragment.class;
+        } else if (id == R.id.consgines) {
+            fragmentClass = ConsignesFragment.class;
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.exit) {
@@ -107,6 +109,15 @@ public class Dashboard extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
