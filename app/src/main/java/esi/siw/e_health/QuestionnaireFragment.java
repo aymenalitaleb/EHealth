@@ -6,20 +6,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
+
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.HashMap;
 
 import esi.siw.e_health.Tasks.GetQuestionnaire;
@@ -29,14 +31,15 @@ import esi.siw.e_health.Tasks.SessionManagement;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class QuestionnaireFragment extends Fragment {
+public class QuestionnaireFragment extends Fragment implements View.OnClickListener {
 
     // Session Manager Class
     SessionManagement session;
     View view;
 
     LinearLayout linearLayout;
-    ScrollView scrollView;
+    Button validateQuestionnaire;
+    RelativeLayout relativeLayout;
     JSONArray jsonArray;
 
     public QuestionnaireFragment() {
@@ -48,10 +51,18 @@ public class QuestionnaireFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_questionnaire, container, false);
-        scrollView = view.findViewById(R.id.scrollView);
+        validateQuestionnaire = view.findViewById(R.id.validateQuestionnaire);
+        validateQuestionnaire.setOnClickListener(this);
+        ScrollView scrollView = view.findViewById(R.id.scrollView);
+        relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
+
         scrollView.removeAllViews();
         scrollView.addView(linearLayout);
+
+        relativeLayout.removeAllViews();
+        relativeLayout.addView(scrollView);
+        relativeLayout.addView(validateQuestionnaire);
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
@@ -63,9 +74,11 @@ public class QuestionnaireFragment extends Fragment {
 
 
         // Inflate the layout for this fragment
-        return scrollView;
+        return relativeLayout;
 
     }
+
+
 
 
     private String readFromFile(String fileName) {
@@ -108,6 +121,7 @@ public class QuestionnaireFragment extends Fragment {
                     TextView question = new TextView(getContext());
                     jsonObject = jsonArray.getJSONObject(i);
                     question.setText(jsonObject.getString("Question"));
+                    question.setTextSize(25);
                     question.setId(jsonObject.getInt("idQuestion"));
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -119,6 +133,7 @@ public class QuestionnaireFragment extends Fragment {
                     for (int j = 0; j < choix.length(); j++) {
                         CheckBox choi = new CheckBox(getContext());
                         choi.setText(choix.getJSONObject(j).getString("Choix"));
+                        choi.setId(choix.getJSONObject(j).getInt("idChoix"));
                         choi.setLayoutParams(params);
                         linearLayout.addView(choi);
                     }
@@ -134,4 +149,43 @@ public class QuestionnaireFragment extends Fragment {
 
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.validateQuestionnaire:
+                try {
+                    JSONArray questionnaireReponse = new JSONArray();
+                    int j;
+                    for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                        View view = linearLayout.getChildAt(i);
+                        if (view instanceof TextView) {
+                            JSONObject question = new JSONObject();
+                            question.put("idQuestion", view.getId());
+                            question.put("Question",  ((TextView) view).getText());
+                            j = i + 1;
+                            View checkBox = linearLayout.getChildAt(j);
+                            JSONArray lesChoix =  new JSONArray();
+                            while (checkBox instanceof CheckBox) {
+                                JSONObject choix = new JSONObject();
+                                choix.put("idChoix", checkBox.getId());
+                                choix.put("Choix", ((CheckBox) checkBox).getText());
+                                choix.put("idQuestion",view.getId());
+                                choix.put("Choisi", ((CheckBox) checkBox).isChecked());
+                                lesChoix.put(choix);
+                                question.put("Choix", lesChoix);
+                                j++;
+                                checkBox = linearLayout.getChildAt(j);
+                            }
+                            i=j-1;
+                            questionnaireReponse.put(question);
+                        }
+                    }
+                    Log.e("JSON FILE", String.valueOf(questionnaireReponse));
+                } catch (JSONException e) {
+                    Log.e("erroooooooooooooButton",e.getMessage());
+                }
+                break;
+
+        }
+    }
 }

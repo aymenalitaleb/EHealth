@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/scrollView"
+    android:id="@+id/relativeLayout"
     tools:context=".QuestionnaireFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <ScrollView
+        android:layout_above="@+id/validateQuestionnaire"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/scrollView">
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Teste" />
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
 
 
-    </LinearLayout>
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/validateQuestionnaire"
+        android:text="Validate"/>
 
 
-</ScrollView>
+</RelativeLayout>
