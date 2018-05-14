@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="green">#05ff2e</color>
-    <color name="white">#ffffff</color>
+    <color name="colorPrimary">#2FA349</color>
+    <color name="colorPrimaryDark">#178730</color>
+    <color name="colorAccent">#287685</color>
+    <color name="colorQuestionBackground">#A6E6B4</color>
+    <color name="colorQuestionText">#FFFFFF</color>
+    <color name="colorValidateText">#FFFFFF</color>
+    <color name="colorValidateButton">#9DCFD8</color>
+
+
+
 </resources>

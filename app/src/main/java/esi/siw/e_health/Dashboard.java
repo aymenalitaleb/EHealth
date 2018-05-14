@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -49,17 +50,25 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
         switch (v.getId()) {
             case R.id.consignesbtn:
-                fragmentClass = ConsignesFragment.class;
+                android.app.Fragment fragment1 = getFragmentManager().findFragmentById(R.id.fragmentConsignes);
+                if (fragment1==null || !fragment1.isVisible()) {
+                    fragmentClass = ConsignesFragment.class;
+                }
+
                 break;
             case R.id.questionnaireBtn:
-                fragmentClass = QuestionnaireFragment.class;
+                android.app.Fragment fragment2 = getFragmentManager().findFragmentById(R.id.relativeLayout);
+                if (fragment2==null || !fragment2.isVisible()) {
+                    fragmentClass = QuestionnaireFragment.class;
+                }
                 break;
         }
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            Log.e("class naaaaame: ", fragment.getClass().getName());
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment,fragment.getClass().getName()).commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

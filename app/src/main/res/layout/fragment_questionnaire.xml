@@ -27,8 +27,11 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorValidateButton"
+        android:textSize="25dp"
+        android:textColor="@color/colorValidateText"
         android:id="@+id/validateQuestionnaire"
-        android:text="Validate"/>
+        android:text="Validate" />
 
 
 </RelativeLayout>

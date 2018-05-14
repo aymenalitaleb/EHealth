@@ -2,9 +2,12 @@ package esi.siw.e_health;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,21 +125,33 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     // Getting question
                     TextView question = new TextView(getContext());
                     jsonObject = jsonArray.getJSONObject(i);
+
+                    // Peremeters of the view
                     question.setText(jsonObject.getString("Question"));
                     question.setTextSize(25);
+                    question.setBackgroundColor(getResources().getColor(R.color.colorQuestionBackground));
+                    question.setTextColor(getResources().getColor(R.color.colorQuestionText));
+                    question.setGravity(Gravity.CENTER);
                     question.setId(jsonObject.getInt("idQuestion"));
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     question.setLayoutParams(params);
+
                     linearLayout.addView(question);
 
                     // Getting choices
                     JSONArray choix = jsonObject.getJSONArray("Choix");
                     for (int j = 0; j < choix.length(); j++) {
                         CheckBox choi = new CheckBox(getContext());
+
+                        // Paremeters of the view
+                        params.setMargins(5,5,5,5);
                         choi.setText(choix.getJSONObject(j).getString("Choix"));
                         choi.setId(choix.getJSONObject(j).getInt("idChoix"));
+                        choi.setTextSize(17);
+
                         choi.setLayoutParams(params);
+
                         linearLayout.addView(choi);
                     }
 

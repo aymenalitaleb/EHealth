@@ -1,37 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="esi.siw.e_health.MainActivity">
 
     <LinearLayout
+        android:padding="@dimen/login_layout_padding"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+
 
         <EditText
             android:id="@+id/email"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/password"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
+        <CheckBox
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login" />
+            android:checked="true"
+            android:text="Remember me"/>
 
     </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:layout_marginLeft="@dimen/login_layout_padding"
+        android:layout_marginRight="@dimen/login_layout_padding"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login" />
+
+
+
+</RelativeLayout>

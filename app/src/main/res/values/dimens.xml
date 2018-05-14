@@ -7,5 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="buton_image_size">20dp</dimen>
     <dimen name="margin_checkbox">10dp</dimen>
-    <dimen name="text_size">25dp</dimen>
+    <dimen name="text_size">25sp</dimen>
+    <dimen name="login_layout_padding">25dp</dimen>
 </resources>
