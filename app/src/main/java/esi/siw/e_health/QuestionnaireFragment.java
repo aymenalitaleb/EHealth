@@ -1,5 +1,7 @@
 package esi.siw.e_health;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -153,37 +155,48 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.validateQuestionnaire:
-                try {
-                    JSONArray questionnaireReponse = new JSONArray();
-                    int j;
-                    for (int i = 0; i < linearLayout.getChildCount(); i++) {
-                        View view = linearLayout.getChildAt(i);
-                        if (view instanceof TextView) {
-                            JSONObject question = new JSONObject();
-                            question.put("idQuestion", view.getId());
-                            question.put("Question",  ((TextView) view).getText());
-                            j = i + 1;
-                            View checkBox = linearLayout.getChildAt(j);
-                            JSONArray lesChoix =  new JSONArray();
-                            while (checkBox instanceof CheckBox) {
-                                JSONObject choix = new JSONObject();
-                                choix.put("idChoix", checkBox.getId());
-                                choix.put("Choix", ((CheckBox) checkBox).getText());
-                                choix.put("idQuestion",view.getId());
-                                choix.put("Choisi", ((CheckBox) checkBox).isChecked());
-                                lesChoix.put(choix);
-                                question.put("Choix", lesChoix);
-                                j++;
-                                checkBox = linearLayout.getChildAt(j);
+
+                new AlertDialog.Builder(getContext())
+                    .setTitle("Confirm")
+                    .setMessage("Do you confirm your response of the survey ?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            try {
+                                JSONArray questionnaireReponse = new JSONArray();
+                                int j;
+                                for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                                    View view = linearLayout.getChildAt(i);
+                                    if (view instanceof TextView) {
+                                        JSONObject question = new JSONObject();
+                                        question.put("idQuestion", view.getId());
+                                        question.put("Question",  ((TextView) view).getText());
+                                        j = i + 1;
+                                        View checkBox = linearLayout.getChildAt(j);
+                                        JSONArray lesChoix =  new JSONArray();
+                                        while (checkBox instanceof CheckBox) {
+                                            JSONObject choix = new JSONObject();
+                                            choix.put("idChoix", checkBox.getId());
+                                            choix.put("Choix", ((CheckBox) checkBox).getText());
+                                            choix.put("idQuestion",view.getId());
+                                            choix.put("Choisi", ((CheckBox) checkBox).isChecked());
+                                            lesChoix.put(choix);
+                                            question.put("Choix", lesChoix);
+                                            j++;
+                                            checkBox = linearLayout.getChildAt(j);
+                                        }
+                                        i=j-1;
+                                        questionnaireReponse.put(question);
+                                    }
+                                }
+                                Log.e("JSON FILE", String.valueOf(questionnaireReponse));
+                            } catch (JSONException e) {
+                                Log.e("erroooooooooooooButton",e.getMessage());
                             }
-                            i=j-1;
-                            questionnaireReponse.put(question);
-                        }
-                    }
-                    Log.e("JSON FILE", String.valueOf(questionnaireReponse));
-                } catch (JSONException e) {
-                    Log.e("erroooooooooooooButton",e.getMessage());
-                }
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+
                 break;
 
         }
