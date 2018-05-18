@@ -13,8 +13,6 @@
         android:layout_alignParentTop="true"
         android:layout_above="@+id/bottomBtns"/>
 
-
-
     <LinearLayout
         android:id="@+id/bottomBtns"
         android:layout_alignParentBottom="true"
@@ -24,27 +22,26 @@
         android:layout_height="wrap_content">
 
         <Button
-
             style="?attr/buttonBarButtonStyle"
+            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawableLeft="@drawable/button_image_consignes"
             android:drawableStart="@drawable/button_image_consignes"
             android:layout_weight="1"
             android:id="@+id/consignesbtn"
-            android:text="Consignes"/>
+            android:text="@string/consignes"/>
 
         <Button
             style="?attr/buttonBarButtonStyle"
+            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawableLeft="@drawable/button_image_questionnaire"
             android:drawableStart="@drawable/button_image_questionnaire"
             android:layout_weight="1"
             android:id="@+id/questionnaireBtn"
-            android:text="Questionnaire"/>
-
-
+            android:text="@string/questionnaire"/>
     </LinearLayout>
 
 </RelativeLayout>

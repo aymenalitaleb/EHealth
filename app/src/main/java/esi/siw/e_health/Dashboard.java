@@ -5,13 +5,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
 public class Dashboard extends AppCompatActivity implements View.OnClickListener {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
@@ -31,6 +34,13 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
 
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dashboard, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void init() {

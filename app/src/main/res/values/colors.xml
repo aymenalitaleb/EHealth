@@ -3,10 +3,12 @@
     <color name="colorPrimary">#2FA349</color>
     <color name="colorPrimaryDark">#178730</color>
     <color name="colorAccent">#287685</color>
-    <color name="colorQuestionBackground">#A6E6B4</color>
-    <color name="colorQuestionText">#FFFFFF</color>
+    <color name="colorQuestionText">#A6E6B4</color>
     <color name="colorValidateText">#FFFFFF</color>
     <color name="colorValidateButton">#9DCFD8</color>
+    <color name="black">#eaeaea</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
 
 
 

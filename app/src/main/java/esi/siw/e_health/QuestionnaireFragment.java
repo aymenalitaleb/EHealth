@@ -6,11 +6,13 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -46,6 +48,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     Button validateQuestionnaire;
     RelativeLayout relativeLayout;
     JSONArray jsonArray;
+    Button questionnaireBtn, consginesBtn;
 
     public QuestionnaireFragment() {
         // Required empty public constructor
@@ -122,6 +125,10 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             for (int i = 0; i < jsonArray.length(); i++) {
 
                 try {
+                    AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+                    alphaAnimation.setDuration(1000);
+                    alphaAnimation.setStartOffset(200);
+                    alphaAnimation.setFillAfter(true);
                     // Getting question
                     TextView question = new TextView(getContext());
                     jsonObject = jsonArray.getJSONObject(i);
@@ -129,19 +136,45 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     // Peremeters of the view
                     question.setText(jsonObject.getString("Question"));
                     question.setTextSize(25);
-                    question.setBackgroundColor(getResources().getColor(R.color.colorQuestionBackground));
                     question.setTextColor(getResources().getColor(R.color.colorQuestionText));
                     question.setGravity(Gravity.CENTER);
-                    question.setId(jsonObject.getInt("idQuestion"));
+                    question.setAnimation(alphaAnimation);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     question.setLayoutParams(params);
 
-                    linearLayout.addView(question);
+                    LinearLayout questionContainer = new LinearLayout(getContext());
+                    questionContainer.setLayoutParams(params);
+                    questionContainer.setOrientation(LinearLayout.VERTICAL);
+                    questionContainer.setAnimation(alphaAnimation);
+
+                    View view = new View(getContext());
+                    LinearLayout.LayoutParams horizentalBar = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,1
+                    );
+                    view.setBackgroundColor(getResources().getColor(R.color.colorQuestionText));
+                    view.setLayoutParams(horizentalBar);
+                    view.setAnimation(alphaAnimation);
+
+
+                    LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    cardViewParams.setMargins(25,25,25,25);
+                    CardView cardView = new CardView(getContext());
+                    cardView.setLayoutParams(cardViewParams);
+                    cardView.setAnimation(alphaAnimation);
+
+                    questionContainer.addView(question);
+                    questionContainer.addView(view);
+                    cardView.addView(questionContainer);
+                    linearLayout.addView(cardView);
+
 
                     // Getting choices
                     JSONArray choix = jsonObject.getJSONArray("Choix");
                     for (int j = 0; j < choix.length(); j++) {
+
                         CheckBox choi = new CheckBox(getContext());
 
                         // Paremeters of the view
@@ -151,8 +184,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                         choi.setTextSize(17);
 
                         choi.setLayoutParams(params);
+                        questionContainer.addView(choi);
 
-                        linearLayout.addView(choi);
                     }
 
 

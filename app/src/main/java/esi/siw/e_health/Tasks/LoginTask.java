@@ -22,6 +22,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import esi.siw.e_health.Dashboard;
+import esi.siw.e_health.FirstChangePassword;
 
 /**
  * Created by Creator on 28/03/2018.
@@ -62,7 +63,7 @@ public class LoginTask extends AsyncTask {
 
             String link = "http://malitaleb.000webhostapp.com/login.php";
             String data = URLEncoder.encode("email", "UTF-8") + "="
-                    + URLEncoder.encode(email, "UTF-8") + "="
+                    + URLEncoder.encode(email, "UTF-8") + "&"
                     + URLEncoder.encode("password", "UTF-8") + "="
                     + URLEncoder.encode(password, "UTF-8");
 
@@ -123,8 +124,18 @@ public class LoginTask extends AsyncTask {
                     String Email = jsonObject.getString("Email");
                     String Sexe = jsonObject.getString("Sexe");
                     String Age = jsonObject.getString("Age");
-                    session.createLoginSession(idPatient, Nom, Prenom, Lieu_Naissance, Date_Naissance, Email, Sexe, Avatar, Age);
-                    Intent intent = new Intent(context, Dashboard.class);
+                    String PremiereFois = jsonObject.getString("PremiereFois");
+
+                    Intent intent;
+                    if (PremiereFois.equals("non")) {
+                        intent = new Intent(context, Dashboard.class);
+                        session.createLoginSession(idPatient, Nom, Prenom, Lieu_Naissance, Date_Naissance, Email, Sexe, Avatar, Age);
+                    } else {
+                        intent = new Intent(context, FirstChangePassword.class);
+                        intent.putExtra("Email",Email);
+                        intent.putExtra("idPatient",idPatient);
+                    }
+
                     context.startActivity(intent);
                     ((Activity) context).finish();
                 } else {

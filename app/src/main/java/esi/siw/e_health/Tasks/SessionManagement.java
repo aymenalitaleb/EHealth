@@ -75,6 +75,7 @@ public class SessionManagement {
     public void checkLogin() {
         // Check login status
         if (this.isLoggedIn()) {
+
             // user is not logged in redirect him to Login Activity
             Intent i = new Intent(_context, Dashboard.class);
             // Closing all the Activities
@@ -86,6 +87,7 @@ public class SessionManagement {
             // Staring Login Activity
             _context.startActivity(i);
             ((Activity) _context).finish();
+
         }
 
     }
