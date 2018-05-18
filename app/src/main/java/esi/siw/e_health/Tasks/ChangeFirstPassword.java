@@ -1,9 +1,11 @@
 package esi.siw.e_health.Tasks;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.ArrayRes;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,32 +21,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChangePassword extends AsyncTask {
+public class ChangeFirstPassword extends AsyncTask {
 
+
+    ProgressDialog progressDialog;
     private Context context;
 
-    public ChangePassword(Context context) {
+    public ChangeFirstPassword(Context context) {
         this.context = context;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Changement du mot de passe."); // Setting Message
+        progressDialog.setTitle("Please wait..."); // Setting Title
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+        progressDialog.setCancelable(false);
+        // progressDialog.show(); // Display Progress Dialog
     }
-
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        String link = "http://malitaleb.000webhostapp.com/changePassword.php";
+
+        String link = "http://malitaleb.000webhostapp.com/changeFirstPassword.php";
 
         String idPatient = String.valueOf(objects[0]);
-        String oldPassword = (String) objects[1];
-        String newPassword = (String) objects[2];
+        String Password = (String) objects[1];
+        String Email = (String) objects[2];
 
         List<NameValuePair> nameValuePairs = new ArrayList<>();
+
         nameValuePairs.add(new BasicNameValuePair("idPatient", idPatient));
-        nameValuePairs.add(new BasicNameValuePair("oldPassword", oldPassword));
-        nameValuePairs.add(new BasicNameValuePair("newPassword", newPassword));
+        nameValuePairs.add(new BasicNameValuePair("Password", Password));
 
         try {
             HttpClient httpClient = new DefaultHttpClient();
@@ -61,19 +71,19 @@ public class ChangePassword extends AsyncTask {
             return "Error";
         }
 
-        return "Success";
+        ArrayList<String> auth = new ArrayList<>();
+        auth.add(Email);
+        auth.add(Password);
+        return auth;
     }
 
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        String result = (String) o;
-        if (result.equals("Error")) {
-            Toast.makeText(context, "Old password is incorrect", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Password changed !", Toast.LENGTH_SHORT).show();
-        }
+        ArrayList<String> auth = (ArrayList<String>) o;
+        Log.e("email",auth.get(0));
+        Log.e("password",auth.get(1));
+        new LoginTask(context).execute(auth.get(0), auth.get(1));
 
     }
-
 }

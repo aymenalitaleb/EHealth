@@ -26,22 +26,29 @@
             android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:drawableLeft="@drawable/button_image_consignes"
-            android:drawableStart="@drawable/button_image_consignes"
+            android:textSize="12sp"
             android:layout_weight="1"
             android:id="@+id/consignesbtn"
             android:text="@string/consignes"/>
+
+        <ImageView
+            android:id="@+id/profileBtn"
+            android:src="@drawable/profile"
+            android:layout_width="50sp"
+            android:layout_height="50sp" />
 
         <Button
             style="?attr/buttonBarButtonStyle"
             android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:drawableLeft="@drawable/button_image_questionnaire"
-            android:drawableStart="@drawable/button_image_questionnaire"
+            android:textSize="12sp"
             android:layout_weight="1"
             android:id="@+id/questionnaireBtn"
             android:text="@string/questionnaire"/>
+
+
+
     </LinearLayout>
 
 </RelativeLayout>

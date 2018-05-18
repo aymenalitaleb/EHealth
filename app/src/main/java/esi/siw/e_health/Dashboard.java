@@ -1,5 +1,6 @@
 package esi.siw.e_health;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class Dashboard extends AppCompatActivity implements View.OnClickListener {
 
@@ -17,6 +19,10 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        if (getIntent().hasExtra("finish")) {
+            finish();
+        }
 
         init();
 
@@ -32,8 +38,6 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
-
-
     }
 
 
@@ -46,7 +50,9 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
     public void init() {
         Button questionnaireBtn = findViewById(R.id.questionnaireBtn);
         Button consignesBtn = findViewById(R.id.consignesbtn);
+        ImageView profileBtn = findViewById(R.id.profileBtn);
 
+        profileBtn.setOnClickListener(this);
         questionnaireBtn.setOnClickListener(this);
         consignesBtn.setOnClickListener(this);
 
@@ -60,18 +66,14 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
         switch (v.getId()) {
             case R.id.consignesbtn:
-                android.app.Fragment fragment1 = getFragmentManager().findFragmentById(R.id.fragmentConsignes);
-                if (fragment1==null || !fragment1.isVisible()) {
-                    fragmentClass = ConsignesFragment.class;
-                }
+                fragmentClass = ConsignesFragment.class;
 
                 break;
             case R.id.questionnaireBtn:
-                android.app.Fragment fragment2 = getFragmentManager().findFragmentById(R.id.relativeLayout);
-                if (fragment2==null || !fragment2.isVisible()) {
-                    fragmentClass = QuestionnaireFragment.class;
-                }
+                fragmentClass = QuestionnaireFragment.class;
                 break;
+            case R.id.profileBtn:
+                startActivity(new Intent(this,ProfileActivity.class));
         }
 
         try {

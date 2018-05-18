@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
         rellay1 =  findViewById(R.id.rellay1);
         rellay2 =  findViewById(R.id.rellay2);
 

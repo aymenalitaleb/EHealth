@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Dashboard" />
-        <activity android:name=".TesteDesign" />
         <activity android:name=".FirstChangePassword" />
         <activity android:name=".ProfileActivity" />
     </application>

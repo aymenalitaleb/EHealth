@@ -80,7 +80,6 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
         getQuestions();
 
-
         // Inflate the layout for this fragment
         return relativeLayout;
 

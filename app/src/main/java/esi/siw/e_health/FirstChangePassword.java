@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import esi.siw.e_health.Tasks.ChangePassword;
+import esi.siw.e_health.Tasks.ChangeFirstPassword;
 
 public class FirstChangePassword extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,7 +35,7 @@ public class FirstChangePassword extends AppCompatActivity implements View.OnCli
                 if (password.getText().toString().equals(confirmPassword.getText().toString())) {
                     int idPatient = getIntent().getIntExtra("idPatient", 0);
                     String Email = getIntent().getStringExtra("Email");
-                    new ChangePassword(this).execute(idPatient, password.getText().toString(), Email);
+                    new ChangeFirstPassword(this).execute(idPatient, password.getText().toString(), Email);
                 }
                 break;
         }
