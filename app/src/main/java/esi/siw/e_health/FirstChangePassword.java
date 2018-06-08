@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import esi.siw.e_health.Tasks.ChangeFirstPassword;
+import esi.siw.e_health.tasks.ChangeFirstPassword;
 
 public class FirstChangePassword extends AppCompatActivity implements View.OnClickListener {
 

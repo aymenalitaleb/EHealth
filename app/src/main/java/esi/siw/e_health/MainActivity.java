@@ -9,8 +9,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import esi.siw.e_health.Tasks.LoginTask;
-import esi.siw.e_health.Tasks.SessionManagement;
+import esi.siw.e_health.tasks.LoginTask;
+import esi.siw.e_health.tasks.SessionManagement;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

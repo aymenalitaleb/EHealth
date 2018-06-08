@@ -1,9 +1,8 @@
 package esi.siw.e_health;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -19,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.*;
 
@@ -28,11 +28,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.HashMap;
 
-import esi.siw.e_health.Tasks.GetQuestionnaire;
-import esi.siw.e_health.Tasks.SessionManagement;
+import esi.siw.e_health.tasks.GetQuestionnaire;
+import esi.siw.e_health.tasks.SessionManagement;
 
 
 /**
@@ -44,16 +43,16 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     SessionManagement session;
     View view;
 
+
+    Context context;
     LinearLayout linearLayout;
     Button validateQuestionnaire;
     RelativeLayout relativeLayout;
-    JSONArray jsonArray;
+    JSONObject jsonObject;
     Button questionnaireBtn, consginesBtn;
 
     public QuestionnaireFragment() {
-        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,77 +118,83 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
     public void getQuestions() {
         try {
-            jsonArray = new JSONArray(readFromFile("questionnaire.json"));
-            JSONObject jsonObject = null;
-            for (int i = 0; i < jsonArray.length(); i++) {
+            jsonObject = new JSONObject(readFromFile("questionnaire.json"));
 
-                try {
-                    AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-                    alphaAnimation.setDuration(1000);
-                    alphaAnimation.setStartOffset(200);
-                    alphaAnimation.setFillAfter(true);
-                    // Getting question
-                    TextView question = new TextView(getContext());
-                    jsonObject = jsonArray.getJSONObject(i);
+            // Check if it's answered
+            if (jsonObject.getString("Repondu").equals("oui")) {
+                Toast.makeText(context, "Le questionnaire à été repondu", Toast.LENGTH_LONG).show();
+            } else {
+                JSONArray jsonArray = jsonObject.getJSONArray("Questions");
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                    // Peremeters of the view
-                    question.setText(jsonObject.getString("Question"));
-                    question.setTextSize(25);
-                    question.setTextColor(getResources().getColor(R.color.colorQuestionText));
-                    question.setGravity(Gravity.CENTER);
-                    question.setAnimation(alphaAnimation);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                    question.setLayoutParams(params);
-
-                    LinearLayout questionContainer = new LinearLayout(getContext());
-                    questionContainer.setLayoutParams(params);
-                    questionContainer.setOrientation(LinearLayout.VERTICAL);
-                    questionContainer.setAnimation(alphaAnimation);
-
-                    View view = new View(getContext());
-                    LinearLayout.LayoutParams horizentalBar = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,1
-                    );
-                    view.setBackgroundColor(getResources().getColor(R.color.colorQuestionText));
-                    view.setLayoutParams(horizentalBar);
-                    view.setAnimation(alphaAnimation);
+                    try {
+                        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+                        alphaAnimation.setDuration(1000);
+                        alphaAnimation.setStartOffset(200);
+                        alphaAnimation.setFillAfter(true);
+                        // Getting question
+                        TextView question = new TextView(getContext());
+                        jsonObject = jsonArray.getJSONObject(i);
 
 
-                    LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    );
-                    cardViewParams.setMargins(25,25,25,25);
-                    CardView cardView = new CardView(getContext());
-                    cardView.setLayoutParams(cardViewParams);
-                    cardView.setAnimation(alphaAnimation);
 
-                    questionContainer.addView(question);
-                    questionContainer.addView(view);
-                    cardView.addView(questionContainer);
-                    linearLayout.addView(cardView);
+                        // Peremeters of the view
+                        question.setText(jsonObject.getString("Question"));
+                        question.setTextSize(25);
+                        question.setTextColor(getResources().getColor(R.color.colorQuestionText));
+                        question.setGravity(Gravity.CENTER);
+                        question.setAnimation(alphaAnimation);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                        question.setLayoutParams(params);
+
+                        LinearLayout questionContainer = new LinearLayout(getContext());
+                        questionContainer.setLayoutParams(params);
+                        questionContainer.setOrientation(LinearLayout.VERTICAL);
+                        questionContainer.setAnimation(alphaAnimation);
+
+                        View view = new View(getContext());
+                        LinearLayout.LayoutParams horizentalBar = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,1
+                        );
+                        view.setBackgroundColor(getResources().getColor(R.color.colorQuestionText));
+                        view.setLayoutParams(horizentalBar);
+                        view.setAnimation(alphaAnimation);
 
 
-                    // Getting choices
-                    JSONArray choix = jsonObject.getJSONArray("Choix");
-                    for (int j = 0; j < choix.length(); j++) {
+                        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        cardViewParams.setMargins(25,25,25,25);
+                        CardView cardView = new CardView(getContext());
+                        cardView.setLayoutParams(cardViewParams);
+                        cardView.setAnimation(alphaAnimation);
 
-                        CheckBox choi = new CheckBox(getContext());
+                        questionContainer.addView(question);
+                        questionContainer.addView(view);
+                        cardView.addView(questionContainer);
+                        linearLayout.addView(cardView);
 
-                        // Paremeters of the view
-                        params.setMargins(5,5,5,5);
-                        choi.setText(choix.getJSONObject(j).getString("Choix"));
-                        choi.setId(choix.getJSONObject(j).getInt("idChoix"));
-                        choi.setTextSize(17);
 
-                        choi.setLayoutParams(params);
-                        questionContainer.addView(choi);
+                        // Getting choices
+                        JSONArray choix = jsonObject.getJSONArray("Choix");
+                        for (int j = 0; j < choix.length(); j++) {
 
+                            CheckBox choi = new CheckBox(getContext());
+
+                            // Paremeters of the view
+                            params.setMargins(5,5,5,5);
+                            choi.setText(choix.getJSONObject(j).getString("Choix"));
+                            choi.setId(choix.getJSONObject(j).getInt("idChoix"));
+                            choi.setTextSize(17);
+
+                            choi.setLayoutParams(params);
+                            questionContainer.addView(choi);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
         } catch (JSONException e) {
@@ -211,6 +216,11 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
                         public void onClick(DialogInterface dialog, int whichButton) {
                             try {
+                                JSONObject jsonObject = new JSONObject(readFromFile("questionnaire.json"));
+                                JSONObject reponsesQuestionnaire = new JSONObject();
+                                reponsesQuestionnaire.put("idQuestionnaire", jsonObject.getInt("idQuestionnaire"));
+                                reponsesQuestionnaire.put("Repondu", "oui");
+
                                 JSONArray questionnaireReponse = new JSONArray();
                                 int j;
                                 for (int i = 0; i < linearLayout.getChildCount(); i++) {
@@ -234,10 +244,13 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                                             checkBox = linearLayout.getChildAt(j);
                                         }
                                         i=j-1;
+                                        Log.e("JSON FILE1", String.valueOf(questionnaireReponse));
                                         questionnaireReponse.put(question);
                                     }
                                 }
-                                Log.e("JSON FILE", String.valueOf(questionnaireReponse));
+                                Log.e("JSON FILE2", String.valueOf(questionnaireReponse));
+                                reponsesQuestionnaire.put("Questions",questionnaireReponse);
+
                             } catch (JSONException e) {
                                 Log.e("erroooooooooooooButton",e.getMessage());
                             }

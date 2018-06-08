@@ -3,10 +3,8 @@ package esi.siw.e_health;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
-import esi.siw.e_health.Tasks.ChangePassword;
-import esi.siw.e_health.Tasks.SessionManagement;
+import esi.siw.e_health.tasks.ChangePassword;
+import esi.siw.e_health.tasks.SessionManagement;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 

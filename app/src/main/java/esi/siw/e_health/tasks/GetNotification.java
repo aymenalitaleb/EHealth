@@ -1,4 +1,4 @@
-package esi.siw.e_health.Tasks;
+package esi.siw.e_health.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,40 +15,31 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class GetConsignes extends AsyncTask {
+public class GetNotification extends AsyncTask {
 
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
-    // Session Manager Class
-    SessionManagement session;
     StringBuilder sb = new StringBuilder();
-    ProgressDialog progressDialog;
+
     private Context context;
 
-    public GetConsignes(Context context) {
+    public GetNotification(Context context) {
         this.context = context;
     }
-
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Chargement des consignes ..."); // Setting Message
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        // progressDialog.show(); // Display Progress Dialog
-    }
 
+    }
 
     @Override
     protected Object doInBackground(Object[] objects) {
         try {
-            session = new SessionManagement(context.getApplicationContext());
 
             int idPatient = (Integer) objects[0];
 
-            String link = "http://malitaleb.000webhostapp.com/getConsignes.php";
+            String link = "http://malitaleb.000webhostapp.com/getNotifications.php";
             String data = URLEncoder.encode("idPatient", "UTF-8") + "="
                     + URLEncoder.encode(String.valueOf(idPatient), "UTF-8");
 
@@ -87,25 +78,14 @@ public class GetConsignes extends AsyncTask {
         }
     }
 
-    private void writeToFile(String data, String fileName) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
-    @Override
+       @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
         // progressDialog.dismiss();
-        String response = (String) o;
-        // Toast.makeText(context,response,Toast.LENGTH_LONG).show();
-        if (response != null) {
-            writeToFile(response, "consignes.json");
-        }
+
 
     }
+
+
+
 }

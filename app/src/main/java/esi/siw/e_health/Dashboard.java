@@ -1,5 +1,7 @@
 package esi.siw.e_health;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,9 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import esi.siw.e_health.tasks.ListenNotification;
+
 public class Dashboard extends AppCompatActivity implements View.OnClickListener {
 
-
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -37,6 +41,12 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Starting service for checking notififation
+        intent = new Intent(Dashboard.this, ListenNotification.class);
+        if (!isMyServiceRunning(intent.getClass())) {
+            startService(intent);
+        }
 
     }
 
@@ -85,5 +95,24 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
             e.printStackTrace();
         }
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.e ("isMyServiceRunning?", true+"");
+                return true;
+            }
+        }
+        Log.e ("isMyServiceRunning?", false+"");
+        return false;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(intent);
     }
 }
