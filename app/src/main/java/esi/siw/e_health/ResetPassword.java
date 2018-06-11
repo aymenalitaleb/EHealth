@@ -3,15 +3,20 @@ package esi.siw.e_health;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import esi.siw.e_health.tasks.ResetPasswordTask;
 
 public class ResetPassword extends AppCompatActivity implements View.OnClickListener {
 
-    CircularProgressButton btnResetPassword ;
+    Button btnResetPassword ;
+    ImageView logo;
+    TextView txtView;
+    EditText email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,9 @@ public class ResetPassword extends AppCompatActivity implements View.OnClickList
 
     public void initViews () {
         btnResetPassword = findViewById(R.id.btnResetPassword);
+        logo = findViewById(R.id.imgView_logo);
+        email = findViewById(R.id.email);
+        txtView = findViewById(R.id.txtView);
 
         btnResetPassword.setOnClickListener(this);
 
@@ -39,14 +47,10 @@ public class ResetPassword extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnResetPassword:
-                btnResetPassword.startAnimation();
+                new ResetPasswordTask(this, this).execute(email.getText().toString());
                 break;
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        btnResetPassword.dispose();
-    }
+
 }

@@ -40,7 +40,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ResetPassword"></activity>
+        <activity android:name=".ResetPassword" />
+        <activity android:name=".ValidateResetCode"></activity>
     </application>
 
 </manifest>
