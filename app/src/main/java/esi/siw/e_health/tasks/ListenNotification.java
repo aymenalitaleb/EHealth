@@ -41,8 +41,6 @@ public class ListenNotification extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e("1", "service started");
 
-
-
         checkNotification();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -69,9 +67,6 @@ public class ListenNotification extends Service {
                     if (jsonObject.getString("query_result").equals("SUCCESS")) {
                         Log.e("2", "success");
                         showNotification();
-                    } else {
-                        // TODO: DELETE THIS BLOCK
-                        Log.e("3","no notification");
                     }
                 } catch (JSONException e) {
                     Log.e("json exception",e.getMessage());

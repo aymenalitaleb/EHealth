@@ -16,6 +16,7 @@
         android:layout_marginRight="40dp">
 
         <ImageView
+            android:transitionName="logoTransition"
             android:id="@+id/imgView_logo"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -47,15 +48,17 @@
 
 
                     <TextView
+                        android:transitionName="textviewTransition"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
-                        android:text="Username"
+                        android:text="Email"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
 
                     <EditText
+                        android:transitionName="emailTransition"
                         android:id="@+id/email"
                         android:textColorHint="@color/colorPrimary"
                         android:layout_width="match_parent"
@@ -139,6 +142,8 @@
         android:visibility="gone">
 
         <Button
+            android:transitionName="buttonTransition"
+            android:id="@+id/forgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="esi.siw.e_health">
+
+    <uses-sdk tools:overrideLibrary="br.com.simplepass.loading_button_lib" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -33,9 +36,11 @@
             android:exported="true"
             android:label="RestartServiceWhenStopped">
             <intent-filter>
-                <action android:name="esi.siw.e_health.RestartListener"/>
+                <action android:name="esi.siw.e_health.RestartListener" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".ResetPassword"></activity>
     </application>
 
 </manifest>
