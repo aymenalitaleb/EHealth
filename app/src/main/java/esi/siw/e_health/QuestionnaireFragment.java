@@ -140,6 +140,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
                         // Peremeters of the view
                         question.setText(jsonObject.getString("Question"));
+                        question.setId(jsonObject.getInt("idQuestion"));
                         question.setTextSize(25);
                         question.setTextColor(getResources().getColor(R.color.colorQuestionText));
                         question.setGravity(Gravity.CENTER);
@@ -207,58 +208,70 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.validateQuestionnaire:
-
-                new AlertDialog.Builder(getContext())
-                    .setTitle("Confirm")
-                    .setMessage("Do you confirm your response of the survey ?")
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(readFromFile("questionnaire.json"));
-                                JSONObject reponsesQuestionnaire = new JSONObject();
-                                reponsesQuestionnaire.put("idQuestionnaire", jsonObject.getInt("idQuestionnaire"));
-                                reponsesQuestionnaire.put("Repondu", "oui");
-
-                                JSONArray questionnaireReponse = new JSONArray();
-                                int j;
-                                for (int i = 0; i < linearLayout.getChildCount(); i++) {
-                                    View view = linearLayout.getChildAt(i);
-                                    if (view instanceof TextView) {
-                                        JSONObject question = new JSONObject();
-                                        question.put("idQuestion", view.getId());
-                                        question.put("Question",  ((TextView) view).getText());
-                                        j = i + 1;
-                                        View checkBox = linearLayout.getChildAt(j);
-                                        JSONArray lesChoix =  new JSONArray();
-                                        while (checkBox instanceof CheckBox) {
-                                            JSONObject choix = new JSONObject();
-                                            choix.put("idChoix", checkBox.getId());
-                                            choix.put("Choix", ((CheckBox) checkBox).getText());
-                                            choix.put("idQuestion",view.getId());
-                                            choix.put("Choisi", ((CheckBox) checkBox).isChecked());
-                                            lesChoix.put(choix);
-                                            question.put("Choix", lesChoix);
-                                            j++;
-                                            checkBox = linearLayout.getChildAt(j);
-                                        }
-                                        i=j-1;
-                                        Log.e("JSON FILE1", String.valueOf(questionnaireReponse));
-                                        questionnaireReponse.put(question);
-                                    }
-                                }
-                                Log.e("JSON FILE2", String.valueOf(questionnaireReponse));
-                                reponsesQuestionnaire.put("Questions",questionnaireReponse);
-
-                            } catch (JSONException e) {
-                                Log.e("erroooooooooooooButton",e.getMessage());
-                            }
-                        }})
-                    .setNegativeButton(android.R.string.no, null).show();
-
+                validateSurvey();
                 break;
 
         }
+    }
+
+    private void validateSurvey() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Confirm")
+                .setMessage("Do you confirm your response of the survey ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(readFromFile("questionnaire.json"));
+                            JSONObject reponsesQuestionnaire = new JSONObject();
+                            reponsesQuestionnaire.put("idQuestionnaire", jsonObject.getInt("idQuestionnaire"));
+                            reponsesQuestionnaire.put("Repondu", "oui");
+
+                            JSONArray questionnaireReponse = new JSONArray();
+
+                            // Loop through CardViews
+                            for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                                CardView view = (CardView) linearLayout.getChildAt(i);
+                                LinearLayout questionContainer = (LinearLayout) view.getChildAt(0);
+                                JSONArray lesChoix =  new JSONArray();
+                                JSONObject question = new JSONObject();
+                                // Loop through questionContainer
+                                JSONObject lastQuestion = new JSONObject();
+
+                                for (int j=0; j<questionContainer.getChildCount(); j++) {
+                                    View view2 = questionContainer.getChildAt(j);
+                                    JSONObject choix = new JSONObject();
+                                    if (j>1) {
+                                        // Questions' choices
+
+                                        choix.put("idChoix", view2.getId());
+                                        choix.put("Choix", ((CheckBox) view2).getText().toString());
+                                        choix.put("idQuestion",lastQuestion.getInt("idQuestion"));
+                                        choix.put("Choisi", ((CheckBox) view2).isChecked());
+                                        lesChoix.put(choix);
+                                        Log.e("lesChoix", lesChoix.toString());
+                                        question.put("Choix", lesChoix);
+                                    } else if (view2 instanceof TextView) {
+                                        // It means it's the question text
+                                        question.put("idQuestion", view2.getId());
+                                        question.put("Question",  ((TextView) view2).getText().toString());
+                                        lastQuestion = question;
+//                                        Log.e("question", question.toString());
+                                    }
+
+                                }
+                                questionnaireReponse.put(question);
+//                                Log.e("JSON FILE1", String.valueOf(questionnaireReponse));
+                            }
+                            reponsesQuestionnaire.put("Questions",questionnaireReponse);
+                            Log.e("JSON FILE2", String.valueOf(reponsesQuestionnaire));
+
+                        } catch (JSONException e) {
+                            Log.e("erroooooooooooooButton",e.getMessage());
+                        }
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
     }
 }

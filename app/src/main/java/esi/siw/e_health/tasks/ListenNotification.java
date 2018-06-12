@@ -39,7 +39,7 @@ public class ListenNotification extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("1", "service started");
+//        Log.e("1", "service started");
 
         checkNotification();
         return super.onStartCommand(intent, flags, startId);
@@ -59,17 +59,17 @@ public class ListenNotification extends Service {
 
                 getNotification();
 
-                Log.e("1", "checking notification");
+//                Log.e("1", "checking notification");
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(readFromFile());
-                    Log.e("jsonObject", jsonObject.toString());
+//                    Log.e("jsonObject", jsonObject.toString());
                     if (jsonObject.getString("query_result").equals("SUCCESS")) {
-                        Log.e("2", "success");
+//                        Log.e("2", "success");
                         showNotification();
                     }
                 } catch (JSONException e) {
-                    Log.e("json exception",e.getMessage());
+//                    Log.e("json exception",e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -78,7 +78,7 @@ public class ListenNotification extends Service {
     }
 
     private void showNotification() {
-        Log.e("4","showing notification");
+//        Log.e("4","showing notification");
         Intent intent = new Intent(this, MainActivity.class);
 
 //      intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -138,7 +138,7 @@ public class ListenNotification extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("EXIT", "ondestroy!");
+//        Log.e("EXIT", "ondestroy!");
         Intent broadcastIntent = new Intent("esi.siw.e_health.RestartListener");
         sendBroadcast(broadcastIntent);
 
@@ -179,7 +179,7 @@ public class ListenNotification extends Service {
             }
 
             String response = sb.toString();
-            Log.e("response ",response);
+//            Log.e("response ",response);
             // Toast.makeText(context,response,Toast.LENGTH_LONG).show();
             writeToFile(response, "notifications.json");
 
