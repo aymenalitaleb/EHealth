@@ -15,6 +15,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import esi.siw.e_health.common.Common;
+
 public class GetQuestionnaire extends AsyncTask {
 
     // Alert Dialog Manager
@@ -87,15 +89,7 @@ public class GetQuestionnaire extends AsyncTask {
         }
     }
 
-    private void writeToFile(String data, String fileName) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
+
 
     @Override
     protected void onPostExecute(Object o) {
@@ -104,7 +98,7 @@ public class GetQuestionnaire extends AsyncTask {
         String response = (String) o;
         // Toast.makeText(context,response,Toast.LENGTH_LONG).show();
         if (response != null) {
-            writeToFile(response, "questionnaire.json");
+            Common.writeToFile(response, "questionnaire.json", context);
         }
 
     }

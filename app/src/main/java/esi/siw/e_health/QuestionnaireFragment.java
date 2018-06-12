@@ -30,8 +30,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.GetQuestionnaire;
 import esi.siw.e_health.tasks.SessionManagement;
+import esi.siw.e_health.tasks.ValidateSurvey;
 
 
 /**
@@ -74,8 +76,9 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
         int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-        new GetQuestionnaire(getActivity()).execute(idPatient);
-        // Toast.makeText(getActivity(), readFromFile(), Toast.LENGTH_LONG).show();
+        if (!Common.isFileExist("questionnaire.json")) {
+            new GetQuestionnaire(getActivity()).execute(idPatient);
+        }
 
         getQuestions();
 
@@ -85,44 +88,13 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     }
 
 
-
-
-    private String readFromFile(String fileName) {
-
-        String ret = "";
-
-        try {
-            InputStream inputStream = getActivity().openFileInput(fileName);
-
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((receiveString = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                ret = stringBuilder.toString();
-            }
-        } catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-
-        return ret;
-    }
-
     public void getQuestions() {
         try {
-            jsonObject = new JSONObject(readFromFile("questionnaire.json"));
+            jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
 
             // Check if it's answered
             if (jsonObject.getString("Repondu").equals("oui")) {
-                Toast.makeText(context, "Le questionnaire à été repondu", Toast.LENGTH_LONG).show();
+                getQuestionsAnswered();
             } else {
                 JSONArray jsonArray = jsonObject.getJSONArray("Questions");
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -223,7 +195,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
                     public void onClick(DialogInterface dialog, int whichButton) {
                         try {
-                            JSONObject jsonObject = new JSONObject(readFromFile("questionnaire.json"));
+                            JSONObject jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
                             JSONObject reponsesQuestionnaire = new JSONObject();
                             reponsesQuestionnaire.put("idQuestionnaire", jsonObject.getInt("idQuestionnaire"));
                             reponsesQuestionnaire.put("Repondu", "oui");
@@ -238,17 +210,20 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                                 JSONObject question = new JSONObject();
                                 // Loop through questionContainer
                                 JSONObject lastQuestion = new JSONObject();
-
                                 for (int j=0; j<questionContainer.getChildCount(); j++) {
                                     View view2 = questionContainer.getChildAt(j);
                                     JSONObject choix = new JSONObject();
                                     if (j>1) {
                                         // Questions' choices
-
                                         choix.put("idChoix", view2.getId());
                                         choix.put("Choix", ((CheckBox) view2).getText().toString());
                                         choix.put("idQuestion",lastQuestion.getInt("idQuestion"));
-                                        choix.put("Choisi", ((CheckBox) view2).isChecked());
+                                        // I had boolean problem
+                                        if (((CheckBox) view2).isChecked()) {
+                                            choix.put("Choisi", "oui");
+                                        } else {
+                                            choix.put("Choisi", "non");
+                                        }
                                         lesChoix.put(choix);
                                         Log.e("lesChoix", lesChoix.toString());
                                         question.put("Choix", lesChoix);
@@ -257,15 +232,15 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                                         question.put("idQuestion", view2.getId());
                                         question.put("Question",  ((TextView) view2).getText().toString());
                                         lastQuestion = question;
-//                                        Log.e("question", question.toString());
                                     }
 
                                 }
                                 questionnaireReponse.put(question);
-//                                Log.e("JSON FILE1", String.valueOf(questionnaireReponse));
                             }
                             reponsesQuestionnaire.put("Questions",questionnaireReponse);
                             Log.e("JSON FILE2", String.valueOf(reponsesQuestionnaire));
+                            new ValidateSurvey(getContext(), linearLayout, validateQuestionnaire).execute(reponsesQuestionnaire.toString());
+
 
                         } catch (JSONException e) {
                             Log.e("erroooooooooooooButton",e.getMessage());
@@ -274,4 +249,95 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                 .setNegativeButton(android.R.string.no, null).show();
 
     }
+    private void getQuestionsAnswered() {
+        try {
+            jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
+
+            JSONArray jsonArray = jsonObject.getJSONArray("Questions");
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                try {
+                    validateQuestionnaire.setEnabled(false);
+                    validateQuestionnaire.setText("SURVEY ALREADY ANSWERED");
+                    AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+                    alphaAnimation.setDuration(1000);
+                    alphaAnimation.setStartOffset(200);
+                    alphaAnimation.setFillAfter(true);
+                    // Getting question
+                    TextView question = new TextView(getContext());
+                    jsonObject = jsonArray.getJSONObject(i);
+
+
+
+                    // Peremeters of the view
+                    question.setText(jsonObject.getString("Question"));
+                    question.setId(jsonObject.getInt("idQuestion"));
+                    question.setTextSize(25);
+                    question.setTextColor(getResources().getColor(R.color.colorQuestionText));
+                    question.setGravity(Gravity.CENTER);
+                    question.setAnimation(alphaAnimation);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    question.setLayoutParams(params);
+
+                    LinearLayout questionContainer = new LinearLayout(getContext());
+                    questionContainer.setLayoutParams(params);
+                    questionContainer.setOrientation(LinearLayout.VERTICAL);
+                    questionContainer.setAnimation(alphaAnimation);
+
+                    View view = new View(getContext());
+                    LinearLayout.LayoutParams horizentalBar = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,1
+                    );
+                    view.setBackgroundColor(getResources().getColor(R.color.colorQuestionText));
+                    view.setLayoutParams(horizentalBar);
+                    view.setAnimation(alphaAnimation);
+
+
+                    LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    cardViewParams.setMargins(25,25,25,25);
+                    CardView cardView = new CardView(getContext());
+                    cardView.setLayoutParams(cardViewParams);
+                    cardView.setAnimation(alphaAnimation);
+
+                    questionContainer.addView(question);
+                    questionContainer.addView(view);
+                    cardView.addView(questionContainer);
+                    linearLayout.addView(cardView);
+
+
+                    // Getting choices
+                    JSONArray choix = jsonObject.getJSONArray("Choix");
+                    for (int j = 0; j < choix.length(); j++) {
+
+                        CheckBox choi = new CheckBox(getContext());
+
+                        // Paremeters of the view
+                        params.setMargins(5,5,5,5);
+                        choi.setText(choix.getJSONObject(j).getString("Choix"));
+                        choi.setId(choix.getJSONObject(j).getInt("idChoix"));
+                        if (choix.getJSONObject(j).getString("Choisi").equals("oui")) {
+                            choi.setChecked(true);
+                        } else {
+                            choi.setChecked(false);
+                        }
+                        choi.setEnabled(false);
+                        choi.setTextSize(17);
+
+                        choi.setLayoutParams(params);
+                        questionContainer.addView(choi);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (JSONException e) {
+            Log.e("errooooooooooooooooor2", e.getMessage());
+        }
+
+    }
+
 }

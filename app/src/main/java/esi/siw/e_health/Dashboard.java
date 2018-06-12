@@ -50,13 +50,6 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.dashboard, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
     public void init() {
         Button questionnaireBtn = findViewById(R.id.questionnaireBtn);
         Button consignesBtn = findViewById(R.id.consignesbtn);
