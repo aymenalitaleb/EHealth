@@ -43,7 +43,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/btn_bg"
             android:fontFamily="sans-serif-medium"
-            android:text="@string/sendFeedback"
+            android:text="Send feedback"
             android:textAllCaps="false"
             android:backgroundTint="@color/white"
             android:textColor="@color/colorPrimary"

@@ -19,17 +19,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
 public class SendFeedback extends AsyncTask {
 
 
     private Context context;
-    private SweetAlertDialog sweetAlertDialog;
+    private ProgressDialog progressDialog;
 
-    public SendFeedback(Context context, SweetAlertDialog sweetAlertDialog) {
+    public SendFeedback(Context context, ProgressDialog progressDialog) {
         this.context = context;
-        this.sweetAlertDialog = sweetAlertDialog;
+        this.progressDialog = progressDialog;
     }
 
     @Override
@@ -90,39 +88,27 @@ public class SendFeedback extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        sweetAlertDialog.dismiss();
         String response = (String) o;
         try {
             JSONObject jsonObject = new JSONObject(response);
             String queryResult = jsonObject.getString("query_result");
             switch (queryResult) {
                 case "SUCCESS":
-                    new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setContentText("Le feedback a été envoyé !")
-                            .show();
+                    Toast.makeText(context, "Feedback sent !", Toast.LENGTH_SHORT).show();
                     break;
                 case "INSERT":
-                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Oops...")
-                            .setContentText("Une erreur est survenue !")
-                            .show();
+                    Toast.makeText(context, "Could not add feedback, please try again !", Toast.LENGTH_SHORT).show();
                     break;
                 case "MEDECIN":
-                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Oops...")
-                            .setContentText("Nous n'avons pas trouver votre medecin !")
-                            .show();
+                    Toast.makeText(context, "We couldn't find your doctor, contact him for more details", Toast.LENGTH_SHORT).show();
                     break;
                 case "FAILURE":
-                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Oops...")
-                            .setContentText("Une erreur est survenue !")
-                            .show();
+                    Toast.makeText(context, "An error was occurred, please try again", Toast.LENGTH_SHORT).show();
                     break;
             }
         } catch (JSONException e) {
             Log.e("jsonRespone", e.getMessage());
         }
-
+        progressDialog.dismiss();
     }
 }
