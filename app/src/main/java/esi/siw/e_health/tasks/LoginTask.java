@@ -30,9 +30,6 @@ import esi.siw.e_health.FirstChangePassword;
 
 public class LoginTask extends AsyncTask {
 
-    // Alert Dialog Manager
-    AlertDialogManager alert = new AlertDialogManager();
-    // Session Manager Class
     SessionManagement session;
     StringBuilder sb = new StringBuilder();
     ProgressDialog progressDialog;

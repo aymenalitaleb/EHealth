@@ -17,10 +17,6 @@ import java.net.URLEncoder;
 
 public class GetNotification extends AsyncTask {
 
-    // Alert Dialog Manager
-    AlertDialogManager alert = new AlertDialogManager();
-    StringBuilder sb = new StringBuilder();
-
     private Context context;
 
     public GetNotification(Context context) {

@@ -1,6 +1,7 @@
 package esi.siw.e_health;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,11 +37,13 @@ import esi.siw.e_health.tasks.SessionManagement;
 public class ConsignesFragment extends Fragment implements View.OnClickListener {
 
     View view;
-    Button questionnaireBtn, consginesBtn, sendFeedback;
+    Button sendFeedback;
     RelativeLayout relativeLayout;
-    LinearLayout linearLayout;
+    LinearLayout linearLayout, connectionProblem;
     SessionManagement session;
+    ProgressDialog progressDialog;
     JSONArray jsonArray;
+
 
 
     public ConsignesFragment() {
@@ -57,24 +61,31 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         ScrollView scrollView = view.findViewById(R.id.scrollView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
+        connectionProblem = view.findViewById(R.id.connectionProblem);
 
-        scrollView.removeAllViews();
-        scrollView.addView(linearLayout);
-
-        relativeLayout.removeAllViews();
-        relativeLayout.addView(scrollView);
-        relativeLayout.addView(sendFeedback);
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
         int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-        if (!Common.isFileExist("questionnaire.json")) {
-            new GetConsignes(getActivity()).execute(idPatient);
+
+        if (Common.isConnectedToInternet(getContext())) {
+            scrollView.removeAllViews();
+            scrollView.addView(linearLayout);
+
+            relativeLayout.removeAllViews();
+            relativeLayout.addView(scrollView);
+            relativeLayout.addView(sendFeedback);
+            new GetConsignes(getContext(), progressDialog, getActivity(), linearLayout).execute(idPatient);
+        } else {
+            if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
+                scrollView.setVisibility(View.GONE);
+                sendFeedback.setVisibility(View.GONE);
+                connectionProblem.setVisibility(View.VISIBLE);
+            } else {
+                getConsignes();
+            }
         }
-
-        getConsignes();
-
-
         return relativeLayout;
     }
 
@@ -90,7 +101,7 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
 
     public void getConsignes() {
         try{
-            jsonArray = new JSONArray(Common.readFromFile("consignes.json", getActivity()));
+            jsonArray = new JSONArray(Common.getJsonFile(getContext(), "consignes"));
             Log.e("jsonArray", jsonArray.toString());
 
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
@@ -152,9 +163,8 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
             }
         } catch (JSONException e) {
             Log.e("errorJsonGetConsignes", e.getMessage());
-
-
         }
-
     }
+
+
 }

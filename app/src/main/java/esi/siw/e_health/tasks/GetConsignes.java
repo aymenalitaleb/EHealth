@@ -1,9 +1,22 @@
 package esi.siw.e_health.tasks;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,20 +28,24 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import esi.siw.e_health.R;
 import esi.siw.e_health.common.Common;
 
 public class GetConsignes extends AsyncTask {
 
-    // Alert Dialog Manager
-    AlertDialogManager alert = new AlertDialogManager();
-    // Session Manager Class
     SessionManagement session;
     StringBuilder sb = new StringBuilder();
     ProgressDialog progressDialog;
     private Context context;
+    JSONArray jsonArray;
+    Activity activity;
+    LinearLayout linearLayout;
 
-    public GetConsignes(Context context) {
+    public GetConsignes(Context context, ProgressDialog progressDialog, Activity activity, LinearLayout linearLayout) {
         this.context = context;
+        this.progressDialog = progressDialog;
+        this.activity = activity;
+        this.linearLayout = linearLayout;
     }
 
 
@@ -39,7 +56,7 @@ public class GetConsignes extends AsyncTask {
         progressDialog.setMessage("Chargement des consignes ..."); // Setting Message
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
         progressDialog.setCancelable(false);
-        // progressDialog.show(); // Display Progress Dialog
+        progressDialog.show(); // Display Progress Dialog
     }
 
 
@@ -92,11 +109,82 @@ public class GetConsignes extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        // progressDialog.dismiss();
+         progressDialog.dismiss();
         String response = (String) o;
-        // Toast.makeText(context,response,Toast.LENGTH_LONG).show();
+
         if (response != null) {
-            Common.writeToFile(response, "consignes.json", context);
+//            Common.writeToFile(response, "consignes.json", context);
+            Common.addJsonFile(context, "consignes", response);
+            getConsignes();
+        } else {
+            Toast.makeText(context, "An error has occurred, please try again !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void getConsignes() {
+        try{
+            jsonArray = new JSONArray(Common.getJsonFile(context, "consignes"));
+            Log.e("jsonArray", jsonArray.toString());
+
+            AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+            alphaAnimation.setDuration(1000);
+            alphaAnimation.setStartOffset(200);
+            alphaAnimation.setFillAfter(true);
+
+
+            // Loop through "consignes"
+            for (int i=0; i<jsonArray.length();i++) {
+
+                View view = new View(context);
+                LinearLayout.LayoutParams horizentalBar = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,1
+                );
+                view.setBackgroundColor(activity.getResources().getColor(R.color.colorQuestionText));
+                view.setLayoutParams(horizentalBar);
+                view.setAnimation(alphaAnimation);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                LinearLayout consignesContainer = new LinearLayout(context);
+                consignesContainer.setLayoutParams(params);
+                consignesContainer.setOrientation(LinearLayout.VERTICAL);
+                consignesContainer.setAnimation(alphaAnimation);
+
+
+                LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                cardViewParams.setMargins(25,25,25,25);
+                CardView cardView = new CardView(context);
+                cardView.setLayoutParams(cardViewParams);
+                cardView.setAnimation(alphaAnimation);
+
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                TextView operation = new TextView(context);
+
+                if (jsonObject.getString("Operation").equals("pre")) {
+                    operation.setText("Pre-Operation");
+                } else {
+                    operation.setText("Post-Operation");
+                }
+                operation.setTextSize(25);
+                operation.setTextColor(activity.getResources().getColor(R.color.colorQuestionText));
+                operation.setGravity(Gravity.CENTER);
+                operation.setAnimation(alphaAnimation);
+
+                TextView consignes = new TextView(context);
+                consignes.setText(jsonObject.getString("Consigne"));
+                consignes.setTextSize(17);
+                consignes.setLayoutParams(params);
+
+                consignesContainer.addView(operation);
+                consignesContainer.addView(view);
+                consignesContainer.addView(consignes);
+                cardView.addView(consignesContainer);
+                linearLayout.addView(cardView);
+            }
+        } catch (JSONException e) {
+            Log.e("errorJsonGetConsignes", e.getMessage());
         }
 
     }

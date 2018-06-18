@@ -1,6 +1,7 @@
 package esi.siw.e_health;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -45,13 +46,11 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     SessionManagement session;
     View view;
 
-
-    Context context;
-    LinearLayout linearLayout;
+    LinearLayout linearLayout, connectionProblem, noSurvey;
     Button validateQuestionnaire;
     RelativeLayout relativeLayout;
+    ProgressDialog progressDialog;
     JSONObject jsonObject;
-    Button questionnaireBtn, consginesBtn;
 
     public QuestionnaireFragment() {
     }
@@ -65,23 +64,33 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         ScrollView scrollView = view.findViewById(R.id.scrollView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
+        connectionProblem = view.findViewById(R.id.connectionProblem);
+        noSurvey = view.findViewById(R.id.noSurvey);
 
-        scrollView.removeAllViews();
-        scrollView.addView(linearLayout);
-
-        relativeLayout.removeAllViews();
-        relativeLayout.addView(scrollView);
-        relativeLayout.addView(validateQuestionnaire);
+        progressDialog = new ProgressDialog(getContext());
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
         int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-        if (!Common.isFileExist("questionnaire.json")) {
-            new GetQuestionnaire(getActivity()).execute(idPatient);
+
+        if (Common.isConnectedToInternet(getContext())) {
+            scrollView.removeAllViews();
+            scrollView.addView(linearLayout);
+
+            relativeLayout.removeAllViews();
+            relativeLayout.addView(scrollView);
+            relativeLayout.addView(validateQuestionnaire);
+            new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, progressDialog).execute(idPatient);
+        } else {
+            if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
+                Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
+                scrollView.setVisibility(View.GONE);
+                validateQuestionnaire.setVisibility(View.GONE);
+                connectionProblem.setVisibility(View.VISIBLE);
+            } else {
+                getQuestions();
+            }
         }
-
-        getQuestions();
-
         // Inflate the layout for this fragment
         return relativeLayout;
 
@@ -90,7 +99,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
     public void getQuestions() {
         try {
-            jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
+            jsonObject = new JSONObject(Common.getJsonFile(getContext(),"questionnaire"));
 
             // Check if it's answered
             if (jsonObject.getString("Repondu").equals("oui")) {
@@ -171,7 +180,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                 }
             }
         } catch (JSONException e) {
-            Log.e("errooooooooooooooooor2", e.getMessage());
+            Log.e("getQuestions", e.getMessage());
         }
 
     }
@@ -195,7 +204,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
                     public void onClick(DialogInterface dialog, int whichButton) {
                         try {
-                            JSONObject jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
+                            JSONObject jsonObject = new JSONObject(Common.getJsonFile(getContext(),"questionnaire"));
                             JSONObject reponsesQuestionnaire = new JSONObject();
                             reponsesQuestionnaire.put("idQuestionnaire", jsonObject.getInt("idQuestionnaire"));
                             reponsesQuestionnaire.put("Repondu", "oui");
@@ -251,7 +260,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     }
     private void getQuestionsAnswered() {
         try {
-            jsonObject = new JSONObject(Common.readFromFile("questionnaire.json", getActivity()));
+            jsonObject = new JSONObject(Common.getJsonFile(getContext(), "questionnaire"));
 
             JSONArray jsonArray = jsonObject.getJSONArray("Questions");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -335,7 +344,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                 }
             }
         } catch (JSONException e) {
-            Log.e("errooooooooooooooooor2", e.getMessage());
+            Log.e("getQuestionsAnswered", e.getMessage());
         }
 
     }
