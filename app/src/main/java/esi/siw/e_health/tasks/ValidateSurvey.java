@@ -108,7 +108,7 @@ public class ValidateSurvey extends AsyncTask {
 
             switch (queryResult) {
                 case "SUCCESS":
-                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("Oops...")
                             .setContentText("Le questionnaire à été validé !")
                             .show();

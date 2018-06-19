@@ -1,6 +1,8 @@
 package esi.siw.e_health;
 
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -27,6 +30,7 @@ import java.util.HashMap;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.GetConsignes;
+import esi.siw.e_health.tasks.SendFeedback;
 import esi.siw.e_health.tasks.SessionManagement;
 
 
@@ -44,6 +48,7 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
     JSONArray jsonArray;
     Button btnRefresh, btnRefresh2;
     ScrollView scrollView;
+    int idPatient;
 
     public ConsignesFragment() {
         // Required empty public constructor
@@ -70,7 +75,7 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
-        int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+        idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
 
         if (Common.isConnectedToInternet(getContext())) {
             scrollView.removeAllViews();
@@ -106,6 +111,7 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sendFeedback:
+                sendFeedback();
                 break;
             case R.id.btnRefresh:
                 if (Common.isConnectedToInternet(getContext())) {
@@ -179,6 +185,37 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                 }
                 break;
         }
+    }
+
+    private void sendFeedback() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.send_feedback_popup);
+        dialog.setTitle("Send feedback");
+        final EditText feedBack = dialog.findViewById(R.id.feedback);
+        Button btnSendFeedback = dialog.findViewById(R.id.btnSendFeedback);
+        btnSendFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Confirmer ?")
+                        .setContentText("Envoi du feedback.")
+                        .setConfirmText("Oui, envoyer-le")
+                        .setCancelText("Non")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                                sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                sweetAlertDialog2.setTitle("Envoi du feedback ...");
+                                sweetAlertDialog2.setCancelable(false);
+                                sweetAlertDialog2.show();
+                                new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedBack.getText().toString());
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
+        dialog.show();
     }
 
     public void getConsignes() {

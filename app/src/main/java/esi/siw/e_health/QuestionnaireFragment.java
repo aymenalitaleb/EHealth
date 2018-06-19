@@ -271,9 +271,10 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
 
     private void validateSurvey() {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Are you sure?")
-                .setContentText("Won't be able to modify it!")
-                .setConfirmText("Yes, send it!")
+                .setTitleText("Etes vous sûr")
+                .setContentText("Confirmer la validation.")
+                .setConfirmText("Oui, je la confirmer")
+                .setCancelText("Non")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
