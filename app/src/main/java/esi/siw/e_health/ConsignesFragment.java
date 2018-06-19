@@ -212,7 +212,8 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                                 new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedBack.getText().toString());
                                 dialog.dismiss();
                             }
-                        });
+                        })
+                        .show();
             }
         });
         dialog.show();
