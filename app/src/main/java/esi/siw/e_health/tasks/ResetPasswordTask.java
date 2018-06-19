@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import javax.security.auth.login.LoginException;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.R;
 import esi.siw.e_health.ResetPassword;
 import esi.siw.e_health.ValidateResetCode;
@@ -42,27 +43,23 @@ public class ResetPasswordTask extends AsyncTask {
 
     private Context context;
     private Activity activity;
-    private ProgressDialog progressDialog;
+    private SweetAlertDialog sweetAlertDialog;
 
     private Button btnResetPassword ;
     private ImageView logo;
     private TextView txtView;
     private EditText email;
 
-    public ResetPasswordTask(Context context, Activity activity) {
+    public ResetPasswordTask(Context context, Activity activity, SweetAlertDialog sweetAlertDialog) {
         this.context = context;
         this.activity = activity;
+        this.sweetAlertDialog = sweetAlertDialog;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait ..."); // Setting Message
-        progressDialog.setTitle("Sending confirmation code"); // Setting Title
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        progressDialog.show(); // Display Progress Dialog
+
         initViews();
     }
 
@@ -131,20 +128,29 @@ public class ResetPasswordTask extends AsyncTask {
 
             switch (queryResult) {
                 case "SUCCESS":
-                    Toast.makeText(context, "Confirmation code has been sent", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Le code de confirmation à été envoyé !")
+                            .show();
                     break;
                 case "EMAIL":
-                    Toast.makeText(context, "Email doesn't exist !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("L'émail n'existe pas !")
+                            .show();
                     break;
                 default:
-                    Toast.makeText(context, "There was an error, please try again !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Une érreure est survenue !")
+                            .show();
                     break;
             }
 
         } catch (JSONException e) {
             Log.e("jsonException",e.getMessage());
         }
-        progressDialog.dismiss();
+        sweetAlertDialog.dismiss();
         animateValidateResetCode();
     }
 

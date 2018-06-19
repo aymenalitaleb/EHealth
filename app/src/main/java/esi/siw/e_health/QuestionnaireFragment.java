@@ -1,9 +1,6 @@
 package esi.siw.e_health;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -24,13 +21,9 @@ import android.widget.Toast;
 import org.json.*;
 
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.GetQuestionnaire;
 import esi.siw.e_health.tasks.SessionManagement;
@@ -49,8 +42,10 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     LinearLayout linearLayout, connectionProblem, noSurvey;
     Button validateQuestionnaire;
     RelativeLayout relativeLayout;
-    ProgressDialog progressDialog;
+    SweetAlertDialog sweetAlertDialog;
     JSONObject jsonObject;
+    Button btnRefresh, btnRefresh2;
+    ScrollView scrollView;
 
     public QuestionnaireFragment() {
     }
@@ -61,13 +56,20 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         view = inflater.inflate(R.layout.fragment_questionnaire, container, false);
         validateQuestionnaire = view.findViewById(R.id.validateQuestionnaire);
         validateQuestionnaire.setOnClickListener(this);
-        ScrollView scrollView = view.findViewById(R.id.scrollView);
+        scrollView = view.findViewById(R.id.scrollView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
         connectionProblem = view.findViewById(R.id.connectionProblem);
         noSurvey = view.findViewById(R.id.noSurvey);
+        btnRefresh = view.findViewById(R.id.btnRefresh);
+        btnRefresh2 = view.findViewById(R.id.btnRefresh2);
+        btnRefresh2.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
 
-        progressDialog = new ProgressDialog(getContext());
+        sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        sweetAlertDialog.setTitle("Chargement du questionnaire ...");
+        sweetAlertDialog.setCancelable(false);
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
@@ -77,16 +79,21 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             scrollView.removeAllViews();
             scrollView.addView(linearLayout);
 
-            relativeLayout.removeAllViews();
+            relativeLayout.removeView(scrollView);
+            relativeLayout.removeView(validateQuestionnaire);
+
             relativeLayout.addView(scrollView);
             relativeLayout.addView(validateQuestionnaire);
-            new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, progressDialog).execute(idPatient);
+            sweetAlertDialog.show();
+            new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
         } else {
             if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
                 Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
                 scrollView.setVisibility(View.GONE);
                 validateQuestionnaire.setVisibility(View.GONE);
                 connectionProblem.setVisibility(View.VISIBLE);
+                noSurvey.setVisibility(View.GONE);
+
             } else {
                 getQuestions();
             }
@@ -95,7 +102,6 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         return relativeLayout;
 
     }
-
 
     public void getQuestions() {
         try {
@@ -191,18 +197,86 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             case R.id.validateQuestionnaire:
                 validateSurvey();
                 break;
+            case R.id.btnRefresh:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(validateQuestionnaire);
+
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(validateQuestionnaire);
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+                    SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement du questionnaire ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
+                        scrollView.setVisibility(View.GONE);
+                        validateQuestionnaire.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noSurvey.setVisibility(View.GONE);
+                        btnRefresh = view.findViewById(R.id.btnRefresh);
+                        btnRefresh2 = view.findViewById(R.id.btnRefresh2);
+                        btnRefresh2.setOnClickListener(this);
+                        btnRefresh.setOnClickListener(this);
+                    } else {
+                        getQuestions();
+                    }
+                }
+                break;
+            case R.id.btnRefresh2:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(validateQuestionnaire);
+
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(validateQuestionnaire);
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+                    SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement du questionnaire ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
+                        scrollView.setVisibility(View.GONE);
+                        validateQuestionnaire.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noSurvey.setVisibility(View.GONE);
+                        btnRefresh = view.findViewById(R.id.btnRefresh);
+                        btnRefresh2 = view.findViewById(R.id.btnRefresh2);
+                        btnRefresh2.setOnClickListener(this);
+                        btnRefresh.setOnClickListener(this);
+                    } else {
+                        getQuestions();
+                    }
+                }
+                break;
 
         }
     }
 
     private void validateSurvey() {
-        new AlertDialog.Builder(getContext())
-                .setTitle("Confirm")
-                .setMessage("Do you confirm your response of the survey ?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Won't be able to modify it!")
+                .setConfirmText("Yes, send it!")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
                         try {
                             JSONObject jsonObject = new JSONObject(Common.getJsonFile(getContext(),"questionnaire"));
                             JSONObject reponsesQuestionnaire = new JSONObject();
@@ -248,15 +322,27 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                             }
                             reponsesQuestionnaire.put("Questions",questionnaireReponse);
                             Log.e("JSON FILE2", String.valueOf(reponsesQuestionnaire));
-                            new ValidateSurvey(getContext(), linearLayout, validateQuestionnaire).execute(reponsesQuestionnaire.toString());
+                            SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog2.setTitle("Validating survey ...");
+                            sweetAlertDialog2.setCancelable(false);
+                            sweetAlertDialog2.show();
+                            new ValidateSurvey(getContext(), linearLayout, validateQuestionnaire, sweetAlertDialog2).execute(reponsesQuestionnaire.toString());
 
 
                         } catch (JSONException e) {
                             Log.e("erroooooooooooooButton",e.getMessage());
                         }
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
-
+                        sDialog.dismissWithAnimation();
+                    }
+                })
+                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
     private void getQuestionsAnswered() {
         try {

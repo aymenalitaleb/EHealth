@@ -31,32 +31,24 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.R;
 
 public class ValidateSurvey extends AsyncTask {
 
     private Context context;
-    private ProgressDialog progressDialog;
+    private SweetAlertDialog sweetAlertDialog;
     private LinearLayout linearLayout;
     JSONObject jsonObject;
     private Button validateQuestionnaire;
+    private SweetAlertDialog sweetAlertDialog2;
 
 
-    public ValidateSurvey(Context context, LinearLayout linearLayout, Button validateQuestionnaire) {
+    public ValidateSurvey(Context context, LinearLayout linearLayout, Button validateQuestionnaire, SweetAlertDialog sweetAlertDialog2) {
         this.context = context;
         this.linearLayout = linearLayout;
         this.validateQuestionnaire = validateQuestionnaire;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait ..."); // Setting Message
-        progressDialog.setTitle("Validating the code"); // Setting Title
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-       // progressDialog.show(); // Display Progress Dialog
+        this.sweetAlertDialog2 = sweetAlertDialog2;
     }
 
     @Override
@@ -116,23 +108,27 @@ public class ValidateSurvey extends AsyncTask {
 
             switch (queryResult) {
                 case "SUCCESS":
-                    Toast.makeText(context, "Survey has been validated !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Le questionnaire à été validé !")
+                            .show();
                     linearLayout.removeAllViewsInLayout();
                     validateQuestionnaire.setEnabled(false);
-                    validateQuestionnaire.setText("SURVEY ALREADY ANSWERED");
+                    validateQuestionnaire.setText("Questionnaire répondu !");
                     getQuestions();
-
-
                     break;
                 default:
-                    Toast.makeText(context, "There was an error, please try again !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Une érreure est survenue !")
+                            .show();
                     break;
             }
 
         } catch (JSONException e) {
             Log.e("jsonException",e.getMessage());
         }
-        // progressDialog.dismiss();
+        sweetAlertDialog2.dismiss();
     }
 
     private void getQuestions() {
@@ -141,7 +137,7 @@ public class ValidateSurvey extends AsyncTask {
 
             // Check if it's answered
             if (jsonObject.getString("Repondu").equals("oui")) {
-                Toast.makeText(context, "Le questionnaire à été repondu", Toast.LENGTH_LONG).show();
+                // Toast.makeText(context, "Le questionnaire à été repondu", Toast.LENGTH_LONG).show();
             } else {
                 JSONArray jsonArray = jsonObject.getJSONArray("Questions");
                 for (int i = 0; i < jsonArray.length(); i++) {

@@ -1,7 +1,6 @@
 package esi.siw.e_health.tasks;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.R;
 import esi.siw.e_health.common.Common;
 
@@ -35,28 +34,22 @@ public class GetConsignes extends AsyncTask {
 
     SessionManagement session;
     StringBuilder sb = new StringBuilder();
-    ProgressDialog progressDialog;
+    SweetAlertDialog sweetAlertDialog;
     private Context context;
     JSONArray jsonArray;
     Activity activity;
     LinearLayout linearLayout;
+    LinearLayout noConsigne;
+    LinearLayout connectionProblem;
 
-    public GetConsignes(Context context, ProgressDialog progressDialog, Activity activity, LinearLayout linearLayout) {
+    public GetConsignes(Context context, SweetAlertDialog sweetAlertDialog, Activity activity,
+                        LinearLayout linearLayout, LinearLayout noConsigne, LinearLayout connectionProblem) {
         this.context = context;
-        this.progressDialog = progressDialog;
+        this.sweetAlertDialog = sweetAlertDialog;
         this.activity = activity;
         this.linearLayout = linearLayout;
-    }
-
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Chargement des consignes ..."); // Setting Message
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        progressDialog.show(); // Display Progress Dialog
+        this.noConsigne = noConsigne;
+        this.connectionProblem = connectionProblem;
     }
 
 
@@ -109,19 +102,31 @@ public class GetConsignes extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-         progressDialog.dismiss();
+        sweetAlertDialog.dismiss();
         String response = (String) o;
-
+        Log.e("response", response);
         if (response != null) {
-//            Common.writeToFile(response, "consignes.json", context);
-            Common.addJsonFile(context, "consignes", response);
-            getConsignes();
+            if (response.trim().charAt(0) == '[') {
+                Common.addJsonFile(context, "consignes", response);
+                noConsigne.setVisibility(View.GONE);
+                connectionProblem.setVisibility(View.GONE);
+                getConsignes();
+            } else {
+                new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Oops...")
+                        .setContentText("Il n'y a aucune consigne pour vous ! ")
+                        .show();
+            }
         } else {
-            Toast.makeText(context, "An error has occurred, please try again !", Toast.LENGTH_SHORT).show();
+            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText("Une érreure est survenue !")
+                    .show();
         }
     }
 
-    public void getConsignes() {
+    private void getConsignes() {
+        Log.e("geSonsignesFunc", "yes");
         try{
             jsonArray = new JSONArray(Common.getJsonFile(context, "consignes"));
             Log.e("jsonArray", jsonArray.toString());

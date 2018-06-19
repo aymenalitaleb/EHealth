@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.Dashboard;
 import esi.siw.e_health.FirstChangePassword;
 
@@ -32,7 +34,7 @@ public class LoginTask extends AsyncTask {
 
     SessionManagement session;
     StringBuilder sb = new StringBuilder();
-    ProgressDialog progressDialog;
+    SweetAlertDialog sweetAlertDialog;
     private Context context;
 
     public LoginTask(Context context) {
@@ -41,12 +43,11 @@ public class LoginTask extends AsyncTask {
 
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait."); // Setting Message
-        progressDialog.setTitle("Loging in ..."); // Setting Title
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        progressDialog.show(); // Display Progress Dialog
+        sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        sweetAlertDialog.setTitle("Logging ...");
+        sweetAlertDialog.setCancelable(false);
+        sweetAlertDialog.show();
     }
 
     @Override
@@ -104,9 +105,8 @@ public class LoginTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        progressDialog.dismiss();
         String response = (String) o;
-        Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, response, Toast.LENGTH_LONG).show();
         if (response != null) {
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -136,19 +136,19 @@ public class LoginTask extends AsyncTask {
                     context.startActivity(intent);
                     ((Activity) context).finish();
                 } else {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                    dialog.setTitle("Error");
-                    dialog.setMessage("Username and password doesn't match !");
-                    dialog.show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Nom d'utilisateur et le mot de passe ne se correspondre pas !")
+                            .show();
                 }
             } catch (JSONException e) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                dialog.setTitle("Error");
-                dialog.setMessage(e.getMessage());
-                dialog.show();
-
+                new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops...")
+                        .setContentText("Une érreure est survenue !")
+                        .show();
             }
         }
+        sweetAlertDialog.dismiss();
 
     }
 }

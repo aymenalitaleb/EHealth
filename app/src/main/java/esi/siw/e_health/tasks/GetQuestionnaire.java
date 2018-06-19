@@ -1,7 +1,6 @@
 package esi.siw.e_health.tasks;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
@@ -13,7 +12,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -30,13 +28,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.R;
 import esi.siw.e_health.common.Common;
 
 public class GetQuestionnaire extends AsyncTask {
 
     SessionManagement session;
-    ProgressDialog progressDialog;
+    SweetAlertDialog sweetAlertDialog;
+    private LinearLayout noSurvey;
+    private LinearLayout connectionProblem;
     private Context context;
 
     LinearLayout linearLayout;
@@ -45,23 +46,14 @@ public class GetQuestionnaire extends AsyncTask {
     Activity activity;
 
 
-    public GetQuestionnaire(Context context, Activity activity, LinearLayout linearLayout, Button validateQuestionnaire, ProgressDialog progressDialog) {
+    public GetQuestionnaire(Context context, Activity activity, LinearLayout linearLayout, Button validateQuestionnaire, SweetAlertDialog sweetAlertDialog, LinearLayout noSurvey, LinearLayout connectionProblem) {
         this.context = context;
         this.activity = activity;
         this.linearLayout = linearLayout;
         this.validateQuestionnaire = validateQuestionnaire;
-        this.progressDialog = progressDialog;
-    }
-
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Chargement du questionnaire ..."); // Setting Message
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        progressDialog.show(); // Display Progress Dialog
+        this.sweetAlertDialog = sweetAlertDialog;
+        this.noSurvey = noSurvey;
+        this.connectionProblem = connectionProblem;
     }
 
 
@@ -114,14 +106,34 @@ public class GetQuestionnaire extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object o) {
-         progressDialog.dismiss();
+        sweetAlertDialog.dismiss();
         String response = (String) o;
         if (response != null) {
 //            Common.writeToFile(response, "questionnaire.json", context);
-            Common.addJsonFile(context, "questionnaire", response);
-            getQuestions();
-        }
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.has("query_result")) {
+                    new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Vous n'avez pas de questionnaire pour le moment ")
+                            .show();
+                } else {
+                    Common.addJsonFile(context, "questionnaire", response);
+                    noSurvey.setVisibility(View.GONE);
+                    connectionProblem.setVisibility(View.GONE);
+                    getQuestions();
+                }
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText("Nous n'avons pas pu récupérer le questionnaire, réessayez plus tard ! ")
+                    .show();
+        }
     }
 
     private void getQuestions() {

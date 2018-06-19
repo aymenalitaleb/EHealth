@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class ValidateResetCode extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,7 +42,10 @@ public class ValidateResetCode extends AppCompatActivity implements View.OnClick
                 if (getIntent() != null) {
                     new esi.siw.e_health.tasks.ValidateResetCode(this).execute(getIntent().getStringExtra("email"), validationCode.getText().toString());
                 } else {
-                    Toast.makeText(this, "There was an error, please try again !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Une érreure est survenue !")
+                            .show();
                 }
 
                 break;

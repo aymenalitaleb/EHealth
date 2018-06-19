@@ -19,26 +19,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ChangeFirstPassword extends AsyncTask {
 
 
     ProgressDialog progressDialog;
     private Context context;
+    private SweetAlertDialog sweetAlertDialog;
 
-    public ChangeFirstPassword(Context context) {
+    public ChangeFirstPassword(Context context, SweetAlertDialog sweetAlertDialog) {
         this.context = context;
+        this.sweetAlertDialog = sweetAlertDialog;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Changement du mot de passe."); // Setting Message
-        progressDialog.setTitle("Please wait..."); // Setting Title
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        // progressDialog.show(); // Display Progress Dialog
-    }
 
     @Override
     protected Object doInBackground(Object[] objects) {
@@ -81,6 +75,7 @@ public class ChangeFirstPassword extends AsyncTask {
         ArrayList<String> auth = (ArrayList<String>) o;
         Log.e("email",auth.get(0));
         Log.e("password",auth.get(1));
+        sweetAlertDialog.dismiss();
         new LoginTask(context).execute(auth.get(0), auth.get(1));
 
     }

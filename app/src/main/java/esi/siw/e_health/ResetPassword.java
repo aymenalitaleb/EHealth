@@ -1,5 +1,6 @@
 package esi.siw.e_health;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.tasks.ResetPasswordTask;
 
 public class ResetPassword extends AppCompatActivity implements View.OnClickListener {
@@ -17,6 +19,7 @@ public class ResetPassword extends AppCompatActivity implements View.OnClickList
     ImageView logo;
     TextView txtView;
     EditText email;
+    SweetAlertDialog sweetAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,12 @@ public class ResetPassword extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnResetPassword:
-                new ResetPasswordTask(this, this).execute(email.getText().toString());
+                sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                sweetAlertDialog.setTitle("Sending confirmation code...");
+                sweetAlertDialog.setCancelable(false);
+                sweetAlertDialog.show();
+                new ResetPasswordTask(this, this, sweetAlertDialog).execute(email.getText().toString());
                 break;
         }
     }

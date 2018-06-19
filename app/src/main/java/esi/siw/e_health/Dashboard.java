@@ -82,7 +82,7 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            Log.e("class naaaaame: ", fragment.getClass().getName());
+//            Log.e("class naaaaame: ", fragment.getClass().getName());
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment,fragment.getClass().getName()).commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,11 +94,11 @@ public class Dashboard extends AppCompatActivity implements View.OnClickListener
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.e ("isMyServiceRunning?", true+"");
+//                Log.e ("isMyServiceRunning?", true+"");
                 return true;
             }
         }
-        Log.e ("isMyServiceRunning?", false+"");
+//        Log.e ("isMyServiceRunning?", false+"");
         return false;
     }
 

@@ -1,7 +1,7 @@
 package esi.siw.e_health;
 
 
-import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -21,13 +21,12 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.GetConsignes;
-import esi.siw.e_health.tasks.GetQuestionnaire;
 import esi.siw.e_health.tasks.SessionManagement;
 
 
@@ -39,12 +38,12 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
     View view;
     Button sendFeedback;
     RelativeLayout relativeLayout;
-    LinearLayout linearLayout, connectionProblem;
+    LinearLayout linearLayout, connectionProblem, noConsgine;
     SessionManagement session;
-    ProgressDialog progressDialog;
+    SweetAlertDialog sweetAlertDialog;
     JSONArray jsonArray;
-
-
+    Button btnRefresh, btnRefresh2;
+    ScrollView scrollView;
 
     public ConsignesFragment() {
         // Required empty public constructor
@@ -58,10 +57,15 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         view = inflater.inflate(R.layout.fragment_consignes, container, false);
         sendFeedback = view.findViewById(R.id.sendFeedback);
         sendFeedback.setOnClickListener(this);
-        ScrollView scrollView = view.findViewById(R.id.scrollView);
+        scrollView = view.findViewById(R.id.scrollView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
         connectionProblem = view.findViewById(R.id.connectionProblem);
+        noConsgine = view.findViewById(R.id.noConsigne);
+        btnRefresh = view.findViewById(R.id.btnRefresh);
+        btnRefresh2 = view.findViewById(R.id.btnRefresh2);
+        btnRefresh2.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
 
 
         session = new SessionManagement(getActivity());
@@ -72,16 +76,25 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
             scrollView.removeAllViews();
             scrollView.addView(linearLayout);
 
-            relativeLayout.removeAllViews();
+            relativeLayout.removeView(scrollView);
+            relativeLayout.removeView(sendFeedback);
+
             relativeLayout.addView(scrollView);
             relativeLayout.addView(sendFeedback);
-            new GetConsignes(getContext(), progressDialog, getActivity(), linearLayout).execute(idPatient);
+
+            sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            sweetAlertDialog.setTitle("Chargement des consignes ...");
+            sweetAlertDialog.setCancelable(false);
+            sweetAlertDialog.show();
+            new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
         } else {
             if (Common.getJsonFile(getContext(), "consignes").equals("")) {
                 Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
                 scrollView.setVisibility(View.GONE);
                 sendFeedback.setVisibility(View.GONE);
                 connectionProblem.setVisibility(View.VISIBLE);
+                noConsgine.setVisibility(View.GONE);
             } else {
                 getConsignes();
             }
@@ -94,8 +107,77 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.sendFeedback:
                 break;
+            case R.id.btnRefresh:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.setVisibility(View.VISIBLE);
+                    sendFeedback.setVisibility(View.VISIBLE);
+
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(sendFeedback);
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(sendFeedback);
+
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+
+                    sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement des consignes ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        scrollView.setVisibility(View.GONE);
+                        sendFeedback.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noConsgine.setVisibility(View.GONE);
 
 
+                    } else {
+                        getConsignes();
+                    }
+                }
+                break;
+            case R.id.btnRefresh2:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.setVisibility(View.VISIBLE);
+                    sendFeedback.setVisibility(View.VISIBLE);
+
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(sendFeedback);
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(sendFeedback);
+
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+
+                    sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement des consignes ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        scrollView.setVisibility(View.GONE);
+                        sendFeedback.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noConsgine.setVisibility(View.GONE);
+
+                    } else {
+                        getConsignes();
+                    }
+                }
+                break;
         }
     }
 

@@ -1,6 +1,5 @@
 package esi.siw.e_health;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
@@ -13,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import esi.siw.e_health.tasks.LoginTask;
 import esi.siw.e_health.tasks.SessionManagement;
@@ -56,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         session.checkLogin();
 
         init();
-
-
-
 
     }
 
@@ -113,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void login() {
-        Toast.makeText(this, email.getText().toString() + "-" + password.getText().toString(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, email.getText().toString() + "-" + password.getText().toString(), Toast.LENGTH_LONG).show();
         new LoginTask(this).execute(email.getText().toString(), password.getText().toString());
+
     }
 }

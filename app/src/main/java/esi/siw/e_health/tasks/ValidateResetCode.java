@@ -3,6 +3,7 @@ package esi.siw.e_health.tasks;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -24,12 +25,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.R;
 
 public class ValidateResetCode extends AsyncTask {
 
     private Context context;
-    private ProgressDialog progressDialog;
+    private SweetAlertDialog sweetAlertDialog;
 
     public ValidateResetCode(Context context) {
         this.context = context;
@@ -38,12 +40,11 @@ public class ValidateResetCode extends AsyncTask {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait ..."); // Setting Message
-        progressDialog.setTitle("Validating the code"); // Setting Title
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-        progressDialog.setCancelable(false);
-        progressDialog.show(); // Display Progress Dialog
+        sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        sweetAlertDialog.setTitle("Validating the code ...");
+        sweetAlertDialog.setCancelable(false);
+        sweetAlertDialog.show();
 
     }
 
@@ -121,30 +122,44 @@ public class ValidateResetCode extends AsyncTask {
                             if (password.getText().toString().equals(confirmPassword.getText().toString())) {
                                 try {
                                     int idPatient = jsonObject.getInt("idPatient");
-                                    progressDialog.dismiss();
-                                    new ChangePasswordReset(context).execute(idPatient, password.getText().toString());
+                                    sweetAlertDialog.dismiss();
+                                    SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+                                    sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                    sweetAlertDialog2.setTitle("Changing password ...");
+                                    sweetAlertDialog2.setCancelable(false);
+                                    sweetAlertDialog2.show();
+                                    new ChangePasswordReset(context, sweetAlertDialog2).execute(idPatient, password.getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             } else {
-                                Toast.makeText(context, "Passwords are not equal !", Toast.LENGTH_SHORT).show();
+                                new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText("Les mots de passe ne sont pas égaux !")
+                                        .show();
                             }
                         }
                     });
                     dialog.show();
                     break;
                 case "CODE":
-                    Toast.makeText(context, "Code has expired", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Le code à été expiré !")
+                            .show();
                     break;
                 default:
-                    Toast.makeText(context, "There was an error, please try again !", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Une érreure est survenue !")
+                            .show();
                     break;
             }
 
         } catch (JSONException e) {
             Log.e("jsonException",e.getMessage());
         }
-        progressDialog.dismiss();
+        sweetAlertDialog.dismiss();
     }
 
 

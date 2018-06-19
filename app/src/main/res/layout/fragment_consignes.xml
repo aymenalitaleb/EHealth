@@ -59,28 +59,27 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/transparent"
             android:textStyle="italic"
-            android:text="Refresh"
+            android:text="Actualiser"
             android:textColor="@color/colorPrimary"
             android:id="@+id/btnRefresh"/>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/noSurvey"
-        android:visibility="gone"
+        android:id="@+id/noConsigne"
         android:gravity="center"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="400dp"
-            android:layout_height="400dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:src="@drawable/connection_problem" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NO SURVEY FOUND !"
+            android:text="Aucune consignes pour vous !"
             android:textSize="20sp"
             android:textStyle="italic"
             android:textAlignment="center"/>
@@ -88,8 +87,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You'll get a notification when there is one."
-            android:textSize="20sp"
+            android:text="Vous receverez une notification lorsqu'ils seront prêtes :)"
+            android:textSize="16sp"
             android:textStyle="italic"
             android:textAlignment="center"/>
 
@@ -98,7 +97,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/transparent"
             android:textStyle="italic"
-            android:text="Refresh"
+            android:text="Actualiser"
             android:textColor="@color/colorPrimary"
             android:id="@+id/btnRefresh2"/>
     </LinearLayout>
