@@ -1,8 +1,11 @@
 package esi.siw.e_health;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,12 +23,10 @@ import android.widget.Toast;
 
 import org.json.*;
 
-
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
-import esi.siw.e_health.tasks.CheckAccount;
 import esi.siw.e_health.tasks.GetQuestionnaire;
 import esi.siw.e_health.tasks.SessionManagement;
 import esi.siw.e_health.tasks.ValidateSurvey;
@@ -47,6 +48,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     JSONObject jsonObject;
     Button btnRefresh, btnRefresh2;
     ScrollView scrollView;
+    ActionBar toolbar;
+    Activity activity;
 
     public QuestionnaireFragment() {
     }
@@ -55,6 +58,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_questionnaire, container, false);
+
         validateQuestionnaire = view.findViewById(R.id.validateQuestionnaire);
         validateQuestionnaire.setOnClickListener(this);
         scrollView = view.findViewById(R.id.scrollView);
@@ -66,6 +70,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         btnRefresh2 = view.findViewById(R.id.btnRefresh2);
         btnRefresh2.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
+
+
 
         sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
@@ -87,7 +93,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             HashMap<String, String> userData = session.getUserDetails();
             int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
 
-            new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
+            new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
         } else {
             if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
                 Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
@@ -217,7 +223,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     sweetAlertDialog.setTitle("Chargement du questionnaire ...");
                     sweetAlertDialog.setCancelable(false);
                     sweetAlertDialog.show();
-                    new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
+                    new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
                         scrollView.setVisibility(View.GONE);
@@ -251,7 +257,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     sweetAlertDialog.setTitle("Chargement du questionnaire ...");
                     sweetAlertDialog.setCancelable(false);
                     sweetAlertDialog.show();
-                    new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
+                    new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
                         scrollView.setVisibility(View.GONE);

@@ -231,7 +231,6 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
     public void getConsignes() {
         try{
             jsonArray = new JSONArray(Common.getJsonFile(getContext(), "consignes"));
-            Log.e("jsonArray", jsonArray.toString());
 
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
             alphaAnimation.setDuration(1000);

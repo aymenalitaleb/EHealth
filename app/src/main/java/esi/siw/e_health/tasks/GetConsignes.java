@@ -104,7 +104,6 @@ public class GetConsignes extends AsyncTask {
         super.onPostExecute(o);
         sweetAlertDialog.dismiss();
         String response = (String) o;
-        Log.e("response", response);
         if (response != null) {
             if (response.trim().charAt(0) == '[') {
                 Common.addJsonFile(context, "consignes", response);
@@ -129,8 +128,6 @@ public class GetConsignes extends AsyncTask {
         Log.e("geSonsignesFunc", "yes");
         try{
             jsonArray = new JSONArray(Common.getJsonFile(context, "consignes"));
-            Log.e("jsonArray", jsonArray.toString());
-
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
             alphaAnimation.setDuration(1000);
             alphaAnimation.setStartOffset(200);

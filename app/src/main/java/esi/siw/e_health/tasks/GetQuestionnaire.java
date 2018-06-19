@@ -1,5 +1,6 @@
 package esi.siw.e_health.tasks;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -29,6 +30,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import esi.siw.e_health.Dashboard;
 import esi.siw.e_health.R;
 import esi.siw.e_health.common.Common;
 
@@ -38,15 +40,18 @@ public class GetQuestionnaire extends AsyncTask {
     SweetAlertDialog sweetAlertDialog;
     private LinearLayout noSurvey;
     private LinearLayout connectionProblem;
+    private ActionBar toolbar;
     private Context context;
 
     LinearLayout linearLayout;
     Button validateQuestionnaire;
     JSONObject jsonObject;
-    Activity activity;
+    Dashboard activity;
 
 
-    public GetQuestionnaire(Context context, Activity activity, LinearLayout linearLayout, Button validateQuestionnaire, SweetAlertDialog sweetAlertDialog, LinearLayout noSurvey, LinearLayout connectionProblem) {
+    public GetQuestionnaire(Context context, Dashboard activity, LinearLayout linearLayout,
+                            Button validateQuestionnaire, SweetAlertDialog sweetAlertDialog,
+                            LinearLayout noSurvey, LinearLayout connectionProblem ) {
         this.context = context;
         this.activity = activity;
         this.linearLayout = linearLayout;
@@ -109,7 +114,6 @@ public class GetQuestionnaire extends AsyncTask {
         sweetAlertDialog.dismiss();
         String response = (String) o;
         if (response != null) {
-//            Common.writeToFile(response, "questionnaire.json", context);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.has("query_result")) {
@@ -140,6 +144,8 @@ public class GetQuestionnaire extends AsyncTask {
         try {
             Log.e("jsonObject", Common.getJsonFile(context, "questionnaire"));
             jsonObject = new JSONObject(Common.getJsonFile(context,"questionnaire"));
+
+            activity.setActionBarTitle(jsonObject.getString("Questionnaire"));
 
             // Check if it's answered
             if (jsonObject.getString("Repondu").equals("oui")) {
