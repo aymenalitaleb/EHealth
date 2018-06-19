@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import esi.siw.e_health.Dashboard;
 import esi.siw.e_health.MainActivity;
+import esi.siw.e_health.PassifAccount;
 
 
 public class SessionManagement {
@@ -24,6 +25,7 @@ public class SessionManagement {
     public static final String KEY_SEXE = "Sexe";
     public static final String KEY_AVATAR = "Avatar";
     public static final String KEY_AGE = "Age";
+    public static final String KEY_ETAT = "Etat";
     // Sharedpref file name
     private static final String PREF_NAME = "Auth";
     // All Shared Preferences Keys
@@ -48,7 +50,7 @@ public class SessionManagement {
     /**
      * Create login session
      */
-    public void createLoginSession(int id, String Nom, String Prenom, String Lieu_Naissance, String Date_Naissance, String Email, String Sexe, String Avatar, String Age) {
+    public void createLoginSession(int id, String Nom, String Prenom, String Lieu_Naissance, String Date_Naissance, String Email, String Sexe, String Avatar, String Age, String Etat) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -62,6 +64,7 @@ public class SessionManagement {
         editor.putString(KEY_SEXE, Sexe);
         editor.putString(KEY_AVATAR, Avatar);
         editor.putString(KEY_AGE, Age);
+        editor.putString(KEY_ETAT, Etat);
 
         // commit changes
         editor.commit();
@@ -71,18 +74,29 @@ public class SessionManagement {
      * Check login method wil check user login status
      * If false it will redirect user to login page
      * Else won't do anything
+     * @param etat
      */
-    public void checkLogin() {
+    public void checkLogin(String etat) {
         // Check login status
         if (this.isLoggedIn()) {
 
-            // user is not logged in redirect him to Login Activity
-            Intent i = new Intent(_context, Dashboard.class);
-            // Closing all the Activities
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Intent i;
+            if (etat.equals("actif")) {
+                // user is not logged in redirect him to Login Activity
+                i = new Intent(_context, Dashboard.class);
+                // Closing all the Activities
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            // Add new Flag to start new Activity
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                // Add new Flag to start new Activity
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            } else {
+                i = new Intent(_context, PassifAccount.class);
+                // Closing all the Activities
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                // Add new Flag to start new Activity
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
 
             // Staring Login Activity
             _context.startActivity(i);
@@ -108,6 +122,7 @@ public class SessionManagement {
         user.put(KEY_SEXE, pref.getString(KEY_SEXE, ""));
         user.put(KEY_AVATAR, pref.getString(KEY_AVATAR, ""));
         user.put(KEY_AGE, pref.getString(KEY_AGE, ""));
+        user.put(KEY_ETAT, pref.getString(KEY_ETAT, ""));
 
         // return user
         return user;

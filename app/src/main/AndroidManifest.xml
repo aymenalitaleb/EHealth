@@ -3,19 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="esi.siw.e_health">
 
-    <uses-sdk tools:overrideLibrary="br.com.simplepass.loading_button_lib"/>
+    <uses-sdk tools:overrideLibrary="br.com.simplepass.loading_button_lib" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        tools:replace="android:icon"
         android:allowBackup="true"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +42,8 @@
         </receiver>
 
         <activity android:name=".ResetPassword" />
-        <activity android:name=".ValidateResetCode"></activity>
+        <activity android:name=".ValidateResetCode" />
+        <activity android:name=".PassifAccount"></activity>
     </application>
 
 </manifest>

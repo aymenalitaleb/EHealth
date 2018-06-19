@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.util.HashMap;
+
 import esi.siw.e_health.tasks.LoginTask;
 import esi.siw.e_health.tasks.SessionManagement;
 
@@ -35,9 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-
     // For the animation
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         handler.postDelayed(runnable, 1200);
         session = new SessionManagement(this);
-        session.checkLogin();
+        HashMap<String, String> userData = session.getUserDetails();
+        String Etat = userData.get(SessionManagement.KEY_ETAT);
+        session.checkLogin(Etat);
 
         init();
 

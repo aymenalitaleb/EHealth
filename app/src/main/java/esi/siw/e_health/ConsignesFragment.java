@@ -204,13 +204,22 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
-                                sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-                                sweetAlertDialog2.setTitle("Envoi du feedback ...");
-                                sweetAlertDialog2.setCancelable(false);
-                                sweetAlertDialog2.show();
-                                new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedBack.getText().toString());
-                                dialog.dismiss();
+                                String feedbackTxt = feedBack.getText().toString();
+                                if (feedbackTxt.equals("")) {
+                                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                            .setTitleText("Oops...")
+                                            .setContentText("Le feedback ne doit pas être vide !")
+                                            .show();
+                                } else {
+                                    SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                                    sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                    sweetAlertDialog2.setTitle("Envoi du feedback ...");
+                                    sweetAlertDialog2.setCancelable(false);
+                                    sweetAlertDialog2.show();
+                                    new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedbackTxt);
+                                    dialog.dismiss();
+                                }
+
                             }
                         })
                         .show();

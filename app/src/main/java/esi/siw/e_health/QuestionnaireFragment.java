@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
+import esi.siw.e_health.tasks.CheckAccount;
 import esi.siw.e_health.tasks.GetQuestionnaire;
 import esi.siw.e_health.tasks.SessionManagement;
 import esi.siw.e_health.tasks.ValidateSurvey;
@@ -71,10 +72,6 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         sweetAlertDialog.setTitle("Chargement du questionnaire ...");
         sweetAlertDialog.setCancelable(false);
 
-        session = new SessionManagement(getActivity());
-        HashMap<String, String> userData = session.getUserDetails();
-        int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-
         if (Common.isConnectedToInternet(getContext())) {
             scrollView.removeAllViews();
             scrollView.addView(linearLayout);
@@ -85,6 +82,11 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             relativeLayout.addView(scrollView);
             relativeLayout.addView(validateQuestionnaire);
             sweetAlertDialog.show();
+
+            session = new SessionManagement(getContext());
+            HashMap<String, String> userData = session.getUserDetails();
+            int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+
             new GetQuestionnaire(getContext(), getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
         } else {
             if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {

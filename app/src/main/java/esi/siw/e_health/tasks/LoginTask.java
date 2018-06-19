@@ -1,13 +1,10 @@
 package esi.siw.e_health.tasks;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +22,7 @@ import java.net.URLEncoder;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.Dashboard;
 import esi.siw.e_health.FirstChangePassword;
+import esi.siw.e_health.PassifAccount;
 
 /**
  * Created by Creator on 28/03/2018.
@@ -32,7 +30,7 @@ import esi.siw.e_health.FirstChangePassword;
 
 public class LoginTask extends AsyncTask {
 
-    SessionManagement session;
+    private SessionManagement session;
     StringBuilder sb = new StringBuilder();
     SweetAlertDialog sweetAlertDialog;
     private Context context;
@@ -122,11 +120,14 @@ public class LoginTask extends AsyncTask {
                     String Sexe = jsonObject.getString("Sexe");
                     String Age = jsonObject.getString("Age");
                     String PremiereFois = jsonObject.getString("PremiereFois");
+                    String Etat = jsonObject.getString("Etat");
+                    session.createLoginSession(idPatient, Nom, Prenom, Lieu_Naissance, Date_Naissance, Email, Sexe, Avatar, Age, Etat);
 
                     Intent intent;
-                    if (PremiereFois.equals("non")) {
+                    if (Etat.equals("passif")) {
+                        intent = new Intent(context, PassifAccount.class);
+                    } else if (PremiereFois.equals("non")) {
                         intent = new Intent(context, Dashboard.class);
-                        session.createLoginSession(idPatient, Nom, Prenom, Lieu_Naissance, Date_Naissance, Email, Sexe, Avatar, Age);
                     } else {
                         intent = new Intent(context, FirstChangePassword.class);
                         intent.putExtra("Email",Email);
