@@ -85,10 +85,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setContentText("Vérifier votre connexion !")
                             .show();
                 }
-
                 break;
             case R.id.forgotPassword:
-                animateResetPasswordActivity();
+                if (Common.isConnectedToInternet(this)) {
+                    animateResetPasswordActivity();
+                } else {
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Vérifier votre connexion !")
+                            .show();
+                }
                 break;
         }
     }
