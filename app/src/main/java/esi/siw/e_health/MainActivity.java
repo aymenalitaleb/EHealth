@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.LoginTask;
 import esi.siw.e_health.tasks.SessionManagement;
 
@@ -75,7 +77,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                login();
+                if (Common.isConnectedToInternet(this)) {
+                    login();
+                } else {
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Vérifier votre connexion !")
+                            .show();
+                }
+
                 break;
             case R.id.forgotPassword:
                 animateResetPasswordActivity();
