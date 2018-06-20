@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pas questionnaire pour le moment"
+            android:text="Pas de questionnaire pour le moment"
             android:textSize="20sp"
             android:textStyle="italic"
             android:textAlignment="center"/>
@@ -88,7 +88,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vous receverez une notification lorsqu'il sera prête :)"
+            android:text="Vous receverez une notification lorsqu'il sera prêt :)"
             android:textSize="16sp"
             android:textStyle="italic"
             android:textAlignment="center"/>

@@ -49,7 +49,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connection problem !"
+            android:text="Problème de connexion !"
             android:textSize="20sp"
             android:textStyle="italic"
             android:textAlignment="center"/>
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aucune consignes pour vous !"
+            android:text="Aucune consigne pour vous !"
             android:textSize="20sp"
             android:textStyle="italic"
             android:textAlignment="center"/>

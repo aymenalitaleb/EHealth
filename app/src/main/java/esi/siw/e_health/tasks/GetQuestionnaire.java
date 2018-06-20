@@ -240,7 +240,7 @@ public class GetQuestionnaire extends AsyncTask {
 
                 try {
                     validateQuestionnaire.setEnabled(false);
-                    validateQuestionnaire.setText("SURVEY ALREADY ANSWERED");
+                    validateQuestionnaire.setText("Questionaire repondu");
                     AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
                     alphaAnimation.setDuration(1000);
                     alphaAnimation.setStartOffset(200);

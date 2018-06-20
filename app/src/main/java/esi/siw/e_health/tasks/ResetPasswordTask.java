@@ -129,7 +129,6 @@ public class ResetPasswordTask extends AsyncTask {
             switch (queryResult) {
                 case "SUCCESS":
                     new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Oops...")
                             .setContentText("Le code de confirmation à été envoyé !")
                             .show();
                     break;
@@ -142,7 +141,7 @@ public class ResetPasswordTask extends AsyncTask {
                 default:
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Une érreure est survenue !")
+                            .setContentText("Une erreur est survenue !")
                             .show();
                     break;
             }

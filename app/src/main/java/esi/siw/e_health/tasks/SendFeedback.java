@@ -98,18 +98,16 @@ public class SendFeedback extends AsyncTask {
             switch (queryResult) {
                 case "SUCCESS":
                     new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Yes ...")
                             .setContentText("Le feedback a été envoyé !")
                             .show();
                     break;
                 case "INSERT":
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Une érreure est survenue !")
+                            .setContentText("Une erreur est survenue !")
                             .show();
                     break;
                 case "MEDECIN":
-                    Toast.makeText(context, "We couldn't find your doctor, contact him for more details", Toast.LENGTH_SHORT).show();
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
                             .setContentText("Nous n'avons pas trouver votre medecin !")
@@ -118,7 +116,7 @@ public class SendFeedback extends AsyncTask {
                 case "FAILURE":
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Une érreure est survenue !")
+                            .setContentText("Une erreur est survenue !")
                             .show();
                     break;
             }

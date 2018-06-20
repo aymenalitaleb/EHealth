@@ -119,18 +119,27 @@ public class ValidateResetCode extends AsyncTask {
                     changePassword.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (password.getText().toString().equals(confirmPassword.getText().toString())) {
-                                try {
-                                    int idPatient = jsonObject.getInt("idPatient");
-                                    sweetAlertDialog.dismiss();
-                                    SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-                                    sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-                                    sweetAlertDialog2.setTitle("Changing password ...");
-                                    sweetAlertDialog2.setCancelable(false);
-                                    sweetAlertDialog2.show();
-                                    new ChangePasswordReset(context, sweetAlertDialog2).execute(idPatient, password.getText().toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                            String txtPassword = password.getText().toString();
+                            String txtConfirmPassword = confirmPassword.getText().toString();
+                            if (txtPassword.equals(txtConfirmPassword)) {
+                                if (txtPassword.length() > 7) {
+                                    try {
+                                        int idPatient = jsonObject.getInt("idPatient");
+                                        sweetAlertDialog.dismiss();
+                                        SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+                                        sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                        sweetAlertDialog2.setTitle("Changing password ...");
+                                        sweetAlertDialog2.setCancelable(false);
+                                        sweetAlertDialog2.show();
+                                        new ChangePasswordReset(context, sweetAlertDialog2).execute(idPatient, password.getText().toString());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }  else {
+                                    new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oops...")
+                                            .setContentText("Le nouveau mot de passe doit contenir au moins 8 caractères !")
+                                            .show();
                                 }
                             } else {
                                 new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
@@ -151,7 +160,7 @@ public class ValidateResetCode extends AsyncTask {
                 default:
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Une érreure est survenue !")
+                            .setContentText("Une erreur est survenue !")
                             .show();
                     break;
             }

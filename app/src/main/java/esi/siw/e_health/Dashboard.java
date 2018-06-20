@@ -3,49 +3,27 @@ package esi.siw.e_health;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import java.util.HashMap;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import esi.siw.e_health.tasks.CheckAccount;
 import esi.siw.e_health.tasks.ListenNotification;
 import esi.siw.e_health.tasks.SessionManagement;
 
 public class Dashboard extends AppCompatActivity implements View.OnClickListener {
 
     Intent intent;
-    SweetAlertDialog sweetAlertDialog;
-    SessionManagement session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
-        sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        sweetAlertDialog.setTitle("Vérification du compte ...");
-        sweetAlertDialog.setCancelable(false);
-        sweetAlertDialog.show();
-
-        session = new SessionManagement(this);
-        HashMap<String, String> userData = session.getUserDetails();
-        int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-
-
-        new CheckAccount(this, sweetAlertDialog, idPatient).execute(idPatient);
-
 
         if (getIntent().hasExtra("finish")) {
             finish();

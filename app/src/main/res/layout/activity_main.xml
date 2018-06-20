@@ -87,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
-                        android:text="Password"
+                        android:text="Mot de passe"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
@@ -151,7 +151,7 @@
             android:layout_centerInParent="true"
             android:background="@color/transparent"
             android:fontFamily="sans-serif"
-            android:text="Forgot Password?"
+            android:text="Mot de passe oublié ?"
             android:textAllCaps="true"
             android:textColor="@color/white" />
 

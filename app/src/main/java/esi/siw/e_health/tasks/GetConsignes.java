@@ -117,9 +117,9 @@ public class GetConsignes extends AsyncTask {
                         .show();
             }
         } else {
-            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+            new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Oops...")
-                    .setContentText("Une érreure est survenue !")
+                    .setContentText("Une erreur est survenue !")
                     .show();
         }
     }

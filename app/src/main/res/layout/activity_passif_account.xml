@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Votre compte est à été desactivé !"
+        android:text="Votre compte a été desactivé !"
         android:textSize="20sp"
         android:textStyle="italic"
         android:textAlignment="center"/>
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/transparent"
         android:textStyle="italic"
-        android:text="Logout"
+        android:text="Déconnexion"
         android:textColor="@color/colorPrimary"
         android:id="@+id/btnLogout"/>
 

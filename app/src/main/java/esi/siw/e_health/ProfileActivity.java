@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
@@ -21,7 +23,9 @@ import esi.siw.e_health.tasks.ChangePassword;
 import esi.siw.e_health.tasks.SessionManagement;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
-
+    SessionManagement session;
+    TextView tvFullname, tvProverbe;
+    String proverbeOfToday;
 
     SweetAlertDialog sweetAlertDialog;
     @Override
@@ -35,13 +39,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             getSupportActionBar().setTitle("Profile");
         }
 
+
         init();
+
+
+        session = new SessionManagement(this);
+        HashMap<String, String> userData = session.getUserDetails();
+        String nom = userData.get(SessionManagement.KEY_NOM);
+        String prenom = userData.get(SessionManagement.KEY_PRENOM);
+
+        proverbeOfToday = getProverbeOfToday();
+        tvFullname.setText(nom + " " +prenom);
+        tvProverbe.setText(proverbeOfToday);
 
     }
 
     private void init() {
         Button logout = findViewById(R.id.logout);
         Button changePassword = findViewById(R.id.changePassword);
+
+        tvFullname = findViewById(R.id.tvFullname);
+        tvProverbe = findViewById(R.id.tvProverbe);
+
         sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         sweetAlertDialog.setTitle("Changement de mot de passe ...");
@@ -130,4 +149,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
+
+    public String getProverbeOfToday() {
+        String[] proverbes = new String[10];
+        proverbes[0] = "Evitez le grignotage ou alors prenez une vraie collation avec fruits et laitages. ";
+        proverbes[1] = "Consommez un peu de matières grasses de cuisson et d'assaisonnement (beurre, huile). ";
+        proverbes[2] = "Mangez des fruits et/ou des légumes, crus ou cuits, à tous les repas. ";
+        proverbes[3] = "Accordez une large place au pain. ";
+        proverbes[4] = "Consommez plus souvent des légumes secs. ";
+        proverbes[5] = "Limitez les confiseries. ";
+        proverbes[6] = "Modérez votre consommation de fritures ; il n'existe pas d'huiles légères. ";
+        proverbes[7] = "Variez les fromages aussi souvent que possible, essayez les goûts nouveaux.";
+        proverbes[8] = "Mangez dans le calme et consacrez du temps à vos repas. ";
+        proverbes[9] = "Buvez de l'eau à volonté, pendant les repas ou en dehors. ";
+
+        int random = new Random().nextInt(10);
+        Log.e("random", String.valueOf(random));
+
+        return proverbes[random];
+
+    }
+
 }
+
+

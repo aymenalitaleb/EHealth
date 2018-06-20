@@ -145,7 +145,7 @@ public class LoginTask extends AsyncTask {
             } catch (JSONException e) {
                 new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops...")
-                        .setContentText("Une érreure est survenue !")
+                        .setContentText("Une erreur est survenue !")
                         .show();
             }
         }

@@ -5,13 +5,11 @@
     <string name="login">Login</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="consignes">Directives</string>
+    <string name="consignes">Consignes</string>
     <string name="questionnaire">Questionnaire</string>
-    <string name="remember_me">Remember me</string>
-    <string name="validate">Validate</string>
-    <string name="action_settings">Settings</string>
+    <string name="validate">Valider</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="sendFeedback">Send feedback</string>
+    <string name="sendFeedback">Envoyer feedback</string>
 </resources>

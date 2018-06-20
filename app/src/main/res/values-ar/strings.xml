@@ -1,9 +1,0 @@
-<resources>
-    <string name="email">البريد الالكتروني</string>
-    <string name="password">كلمة المرور</string>
-    <string name="login">دخول</string>
-    <string name="consignes">توجيهات</string>
-    <string name="questionnaire">استبيان</string>
-    <string name="remember_me">تذكرني</string>
-    <string name="validate">تأكيد</string>
-</resources>

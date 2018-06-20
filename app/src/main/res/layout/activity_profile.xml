@@ -22,11 +22,11 @@
                 android:layout_height="150dp"
                 android:src="@drawable/profile"/>
             <TextView
+                android:id="@+id/tvFullname"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wiliam Snoe"
                 android:textColor="#fff"
                 android:textStyle="bold"
                 android:textSize="21sp"/>
@@ -42,11 +42,11 @@
             android:layout_marginTop="270dp">
 
             <TextView
+                android:id="@+id/tvProverbe"
                 android:gravity="center"
                 android:layout_margin="7dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="kdgjioiukdgjosfdihoiuhoizeurhgoizerhbomzdifhboiehboiukdgjosfdihoiuhoizeurhgoizerhbomzdifhboiehboiu"/>
+                android:layout_height="wrap_content" />
 
 
         </android.support.v7.widget.CardView>
@@ -69,7 +69,7 @@
             android:layout_height="40dp"
             android:background="@drawable/btn_bg"
             android:fontFamily="sans-serif-medium"
-            android:text="Change Password"
+            android:text="Changer mot de passe"
             android:textAllCaps="false"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/white"
@@ -82,7 +82,7 @@
             android:layout_height="40dp"
             android:background="@drawable/btn_bg"
             android:fontFamily="sans-serif-medium"
-            android:text="LOGOUT"
+            android:text="Déconnexion"
             android:textAllCaps="false"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/white"

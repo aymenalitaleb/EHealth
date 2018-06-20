@@ -111,7 +111,6 @@ public class ChangePassword extends AsyncTask {
                 switch (jsonObject.getString("query_result")) {
                     case "SUCCESS":
                         new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Oops...")
                                 .setContentText("Mot de passe changé")
                                 .show();
                         break;
@@ -124,14 +123,14 @@ public class ChangePassword extends AsyncTask {
                     default:
                         new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
-                                .setContentText("Une érreure est survenue !")
+                                .setContentText("Une erreur est survenue !")
                                 .show();
                         break;
                 }
             }  else {
                 new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops...")
-                        .setContentText("Une érreure est survenue !")
+                        .setContentText("Une erreur est survenue !")
                         .show();
             }
         } catch (JSONException e) {

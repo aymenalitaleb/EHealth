@@ -101,6 +101,8 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                 connectionProblem.setVisibility(View.VISIBLE);
                 noConsgine.setVisibility(View.GONE);
             } else {
+                connectionProblem.setVisibility(View.GONE);
+                noConsgine.setVisibility(View.GONE);
                 getConsignes();
             }
         }
@@ -138,13 +140,18 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                     new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
                         scrollView.setVisibility(View.GONE);
                         sendFeedback.setVisibility(View.GONE);
                         connectionProblem.setVisibility(View.VISIBLE);
                         noConsgine.setVisibility(View.GONE);
 
-
                     } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noConsgine.setVisibility(View.GONE);
                         getConsignes();
                     }
                 }
@@ -174,12 +181,18 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
                     new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
                         scrollView.setVisibility(View.GONE);
                         sendFeedback.setVisibility(View.GONE);
                         connectionProblem.setVisibility(View.VISIBLE);
                         noConsgine.setVisibility(View.GONE);
 
                     } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noConsgine.setVisibility(View.GONE);
                         getConsignes();
                     }
                 }
@@ -196,33 +209,35 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         btnSendFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("Confirmer ?")
-                        .setContentText("Envoi du feedback.")
-                        .setConfirmText("Oui, envoyer-le")
-                        .setCancelText("Non")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                String feedbackTxt = feedBack.getText().toString();
-                                if (feedbackTxt.equals("")) {
-                                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                                            .setTitleText("Oops...")
-                                            .setContentText("Le feedback ne doit pas être vide !")
-                                            .show();
-                                } else {
-                                    SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
-                                    sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-                                    sweetAlertDialog2.setTitle("Envoi du feedback ...");
-                                    sweetAlertDialog2.setCancelable(false);
-                                    sweetAlertDialog2.show();
-                                    new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedbackTxt);
-                                    dialog.dismiss();
-                                }
+                final String feedbackTxt = feedBack.getText().toString();
+                if (feedbackTxt.equals("")) {
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Le feedback ne doit pas être vide !")
+                            .show();
+                } else {
+                    final SweetAlertDialog sweetAlertDialog3 = new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
+                    sweetAlertDialog3.setTitleText("Confirmer ?");
+                    sweetAlertDialog3.setContentText("Envoi du feedback.");
+                    sweetAlertDialog3.setConfirmText("Oui");
+                    sweetAlertDialog3.setCancelText("Non");
+                    sweetAlertDialog3.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog2.setTitle("Envoi du feedback ...");
+                            sweetAlertDialog2.setCancelable(false);
+                            sweetAlertDialog2.show();
+                            new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedbackTxt);
+                            sweetAlertDialog3.dismiss();
+                        }
+                    });
+                    sweetAlertDialog3.show();
 
-                            }
-                        })
-                        .show();
+                    dialog.dismiss();
+                }
+
             }
         });
         dialog.show();

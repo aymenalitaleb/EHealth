@@ -1,11 +1,9 @@
 package esi.siw.e_health;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,7 +47,6 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
     Button btnRefresh, btnRefresh2;
     ScrollView scrollView;
     ActionBar toolbar;
-    Activity activity;
 
     public QuestionnaireFragment() {
     }
@@ -71,7 +68,9 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         btnRefresh2.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
 
-
+        session = new SessionManagement(getContext());
+        HashMap<String, String> userData = session.getUserDetails();
+        int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
 
         sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
@@ -89,9 +88,6 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
             relativeLayout.addView(validateQuestionnaire);
             sweetAlertDialog.show();
 
-            session = new SessionManagement(getContext());
-            HashMap<String, String> userData = session.getUserDetails();
-            int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
 
             new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
         } else {
@@ -103,6 +99,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                 noSurvey.setVisibility(View.GONE);
 
             } else {
+                connectionProblem.setVisibility(View.GONE);
+                noSurvey.setVisibility(View.GONE);
                 getQuestions();
             }
         }
@@ -226,6 +224,10 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
                         scrollView.setVisibility(View.GONE);
                         validateQuestionnaire.setVisibility(View.GONE);
                         connectionProblem.setVisibility(View.VISIBLE);
@@ -235,6 +237,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                         btnRefresh2.setOnClickListener(this);
                         btnRefresh.setOnClickListener(this);
                     } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noSurvey.setVisibility(View.GONE);
                         getQuestions();
                     }
                 }
@@ -260,6 +264,10 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                     new GetQuestionnaire(getContext(), (Dashboard)getActivity(), linearLayout, validateQuestionnaire, sweetAlertDialog, noSurvey, connectionProblem).execute(idPatient);
                 } else {
                     if (Common.getJsonFile(getContext(), "questionnaire").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
                         scrollView.setVisibility(View.GONE);
                         validateQuestionnaire.setVisibility(View.GONE);
                         connectionProblem.setVisibility(View.VISIBLE);
@@ -269,6 +277,8 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
                         btnRefresh2.setOnClickListener(this);
                         btnRefresh.setOnClickListener(this);
                     } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noSurvey.setVisibility(View.GONE);
                         getQuestions();
                     }
                 }
@@ -281,7 +291,7 @@ public class QuestionnaireFragment extends Fragment implements View.OnClickListe
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Etes vous sûr")
                 .setContentText("Confirmer la validation.")
-                .setConfirmText("Oui, je la confirmer")
+                .setConfirmText("Oui")
                 .setCancelText("Non")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override

@@ -92,13 +92,12 @@ public class ChangePasswordReset extends AsyncTask {
             switch (queryResult) {
                 case "SUCCESS":
                     new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Oops...")
                             .setContentText("Mot de passe changé, essayez de vous connecter avec le nouveau mot de passe.")
                             .show();
                 default:
                     new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Une érreure est survenue !")
+                            .setContentText("Une erreur est survenue !")
                             .show();
                     break;
             }
