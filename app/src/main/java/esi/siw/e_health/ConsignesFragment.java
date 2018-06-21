@@ -3,6 +3,7 @@ package esi.siw.e_health;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import esi.siw.e_health.common.Common;
 import esi.siw.e_health.tasks.GetConsignes;
 import esi.siw.e_health.tasks.SendFeedback;
@@ -37,13 +40,15 @@ import esi.siw.e_health.tasks.SessionManagement;
 public class ConsignesFragment extends Fragment implements View.OnClickListener {
 
     View view;
-    Button questionnaireBtn, consginesBtn, sendFeedback;
+    Button sendFeedback;
     RelativeLayout relativeLayout;
-    LinearLayout linearLayout;
+    LinearLayout linearLayout, connectionProblem, noConsgine;
     SessionManagement session;
+    SweetAlertDialog sweetAlertDialog;
     JSONArray jsonArray;
+    Button btnRefresh, btnRefresh2;
+    ScrollView scrollView;
     int idPatient;
-
 
     public ConsignesFragment() {
         // Required empty public constructor
@@ -57,27 +62,50 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         view = inflater.inflate(R.layout.fragment_consignes, container, false);
         sendFeedback = view.findViewById(R.id.sendFeedback);
         sendFeedback.setOnClickListener(this);
-        ScrollView scrollView = view.findViewById(R.id.scrollView);
+        scrollView = view.findViewById(R.id.scrollView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         linearLayout = view.findViewById(R.id.linearLayout);
+        connectionProblem = view.findViewById(R.id.connectionProblem);
+        noConsgine = view.findViewById(R.id.noConsigne);
+        btnRefresh = view.findViewById(R.id.btnRefresh);
+        btnRefresh2 = view.findViewById(R.id.btnRefresh2);
+        btnRefresh2.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
 
-        scrollView.removeAllViews();
-        scrollView.addView(linearLayout);
-
-        relativeLayout.removeAllViews();
-        relativeLayout.addView(scrollView);
-        relativeLayout.addView(sendFeedback);
 
         session = new SessionManagement(getActivity());
         HashMap<String, String> userData = session.getUserDetails();
         idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
-        if (!Common.isFileExist("questionnaire.json")) {
-            new GetConsignes(getActivity()).execute(idPatient);
+
+        if (Common.isConnectedToInternet(getContext())) {
+            scrollView.removeAllViews();
+            scrollView.addView(linearLayout);
+
+            relativeLayout.removeView(scrollView);
+            relativeLayout.removeView(sendFeedback);
+
+            relativeLayout.addView(scrollView);
+            relativeLayout.addView(sendFeedback);
+
+            sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            sweetAlertDialog.setTitle("Chargement des consignes ...");
+            sweetAlertDialog.setCancelable(false);
+            sweetAlertDialog.show();
+            new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
+        } else {
+            if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                Toast.makeText(getContext(), "No connection !", Toast.LENGTH_SHORT).show();
+                scrollView.setVisibility(View.GONE);
+                sendFeedback.setVisibility(View.GONE);
+                connectionProblem.setVisibility(View.VISIBLE);
+                noConsgine.setVisibility(View.GONE);
+            } else {
+                connectionProblem.setVisibility(View.GONE);
+                noConsgine.setVisibility(View.GONE);
+                getConsignes();
+            }
         }
-
-        getConsignes();
-
-
         return relativeLayout;
     }
 
@@ -86,6 +114,88 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.sendFeedback:
                 sendFeedback();
+                break;
+            case R.id.btnRefresh:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.setVisibility(View.VISIBLE);
+                    sendFeedback.setVisibility(View.VISIBLE);
+
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(sendFeedback);
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(sendFeedback);
+
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+
+                    sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement des consignes ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
+                        scrollView.setVisibility(View.GONE);
+                        sendFeedback.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noConsgine.setVisibility(View.GONE);
+
+                    } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noConsgine.setVisibility(View.GONE);
+                        getConsignes();
+                    }
+                }
+                break;
+            case R.id.btnRefresh2:
+                if (Common.isConnectedToInternet(getContext())) {
+                    scrollView.setVisibility(View.VISIBLE);
+                    sendFeedback.setVisibility(View.VISIBLE);
+
+                    scrollView.removeAllViews();
+                    scrollView.addView(linearLayout);
+
+                    relativeLayout.removeView(scrollView);
+                    relativeLayout.removeView(sendFeedback);
+                    relativeLayout.addView(scrollView);
+                    relativeLayout.addView(sendFeedback);
+
+                    session = new SessionManagement(getActivity());
+                    HashMap<String, String> userData = session.getUserDetails();
+                    int idPatient = Integer.parseInt(userData.get(SessionManagement.KEY_ID));
+
+                    sweetAlertDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                    sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    sweetAlertDialog.setTitle("Chargement des consignes ...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.show();
+                    new GetConsignes(getContext(), sweetAlertDialog, getActivity(), linearLayout, noConsgine, connectionProblem).execute(idPatient);
+                } else {
+                    if (Common.getJsonFile(getContext(), "consignes").equals("")) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText("Vérifiez votre connexion !")
+                                .show();
+                        scrollView.setVisibility(View.GONE);
+                        sendFeedback.setVisibility(View.GONE);
+                        connectionProblem.setVisibility(View.VISIBLE);
+                        noConsgine.setVisibility(View.GONE);
+
+                    } else {
+                        connectionProblem.setVisibility(View.GONE);
+                        noConsgine.setVisibility(View.GONE);
+                        getConsignes();
+                    }
+                }
                 break;
         }
     }
@@ -99,29 +209,43 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
         btnSendFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProgressDialog progressDialog;
-                progressDialog = new ProgressDialog(getContext());
-                progressDialog.setMessage("Chargement du questionnaire ..."); // Setting Message
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
-                progressDialog.setCancelable(false);
-                progressDialog.show(); // Display Progress Dialog
-                new SendFeedback(getContext(), progressDialog).execute(idPatient, feedBack.getText().toString());
-                dialog.dismiss();
+                final String feedbackTxt = feedBack.getText().toString();
+                if (feedbackTxt.equals("")) {
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Oops...")
+                            .setContentText("Le feedback ne doit pas être vide !")
+                            .show();
+                } else {
+                    final SweetAlertDialog sweetAlertDialog3 = new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE);
+                    sweetAlertDialog3.setTitleText("Confirmer ?");
+                    sweetAlertDialog3.setContentText("Envoi du feedback.");
+                    sweetAlertDialog3.setConfirmText("Oui");
+                    sweetAlertDialog3.setCancelText("Non");
+                    sweetAlertDialog3.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            SweetAlertDialog sweetAlertDialog2 = new SweetAlertDialog(getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog2.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog2.setTitle("Envoi du feedback ...");
+                            sweetAlertDialog2.setCancelable(false);
+                            sweetAlertDialog2.show();
+                            new SendFeedback(getContext(), sweetAlertDialog2).execute(idPatient, feedbackTxt);
+                            sweetAlertDialog3.dismiss();
+                        }
+                    });
+                    sweetAlertDialog3.show();
+
+                    dialog.dismiss();
+                }
+
             }
         });
-
-
         dialog.show();
-
-
-
     }
-
 
     public void getConsignes() {
         try{
-            jsonArray = new JSONArray(Common.readFromFile("consignes.json", getActivity()));
-            Log.e("jsonArray", jsonArray.toString());
+            jsonArray = new JSONArray(Common.getJsonFile(getContext(), "consignes"));
 
             AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
             alphaAnimation.setDuration(1000);
@@ -182,9 +306,8 @@ public class ConsignesFragment extends Fragment implements View.OnClickListener 
             }
         } catch (JSONException e) {
             Log.e("errorJsonGetConsignes", e.getMessage());
-
-
         }
-
     }
+
+
 }
